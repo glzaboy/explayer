@@ -27,6 +27,8 @@
                 android:name=".NavActivity"
                 android:label="@string/title_activity_nav">
         </activity>
+        <service android:name=".playercore.PlayerService"
+        android:process=""></service>
     </application>
 
 </manifest>

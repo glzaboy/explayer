@@ -9,8 +9,7 @@
         tools:context=".NavActivity">
 
     <FrameLayout android:id="@+id/fragment_layout" android:layout_height="match_parent"
-                 android:layout_width="match_parent" tools:layout_editor_absoluteY="0dp"
-                 tools:layout_editor_absoluteX="0dp">
+                 android:layout_width="match_parent">
     </FrameLayout>
 
     <android.support.design.widget.BottomNavigationView
