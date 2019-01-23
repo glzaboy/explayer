@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.dao;
+package com.qintingfm.explayer.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;

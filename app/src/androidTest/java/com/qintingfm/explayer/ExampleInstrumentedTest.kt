@@ -1,7 +1,10 @@
 package com.qintingfm.explayer
 
+import android.arch.persistence.room.Room
+import android.arch.persistence.room.RoomDatabase
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import com.qintingfm.explayer.database.UserDatabase
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,5 +23,8 @@ class ExampleInstrumentedTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
         assertEquals("com.qintingfm.explayer", appContext.packageName)
+        Room.inMemoryDatabaseBuilder(appContext,UserDatabase::class.java).build();
     }
+
+
 }
