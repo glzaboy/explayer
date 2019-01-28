@@ -33,90 +33,117 @@ public class F1 extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        EditText viewById = (EditText)this.getActivity().findViewById(R.id.editText);
+        final EditText viewById = (EditText)this.getActivity().findViewById(R.id.editText);
         io.reactivex.Observable observable= io.reactivex.Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(ObservableEmitter<String> subscriber) throws Exception {
-                subscriber.onNext("Hello");
-                subscriber.onNext("Hi");
-                subscriber.onNext("Aloha");
+                subscriber.onNext(viewById.getText().toString());
                 subscriber.onComplete();
             }
         }).subscribeOn(Schedulers.io());
-        Subscriber<String> subscriber = new Subscriber<String>() {
-            @Override
-            public void onNext(String student) {
-                Log.d(student);
-            }
-
-            @Override
-            public void onSubscribe(Subscription s) {
-
-            }
-
-            @Override
-            public void onError(Throwable t) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        };
+        final NewsDatabase build = Room.databaseBuilder(this.getActivity().getApplicationContext(), NewsDatabase.class,"UserDataBase").build();
         Observer<String> stringObserver=new Observer<String>() {
+
+            NewsDao newsDao = build.getnewsDao();
             @Override
             public void onSubscribe(Disposable d) {
-
+                Log.d(TAG,"onSubscribe"+d.toString());
             }
 
             @Override
             public void onNext(String s) {
-
+                Log.d(TAG,s.toString());
+                News byid = newsDao.findByid(1);
+                if(byid==null){
+                    News news=new News();
+                    news.id=1;
+                    news.setTitle("text");
+                    news.setContent(s);
+                    newsDao.insertNew(news);
+                }else {
+                    byid.setContent(s);
+                    newsDao.updateNews(byid);
+                }
             }
 
             @Override
             public void onError(Throwable e) {
-
+                Log.d(TAG,"onError");
             }
 
             @Override
             public void onComplete() {
-
+                Log.d(TAG,"onComplete");
+                F1.this.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(),"数据保存成功",Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         };
         observable.subscribe(stringObserver);
-
-        NewsDatabase build = Room.databaseBuilder(this.getActivity().getApplicationContext(), NewsDatabase.class,"UserDataBase").allowMainThreadQueries().build();
-        NewsDao newsDao = build.getnewsDao();
-        News byid = newsDao.findByid(1);
-        if(byid==null){
-            News news=new News();
-            news.id=1;
-            news.setTitle("text");
-            news.setContent(viewById.getText().toString());
-            newsDao.insertNew(news);
-        }else {
-            byid.setContent(viewById.getText().toString());
-            newsDao.updateNews(byid);
-        }
-
-        Toast.makeText(getActivity(),"数据保存成功",Toast.LENGTH_LONG).show();
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        EditText viewById = (EditText)this.getActivity().findViewById(R.id.editText);
-        NewsDatabase build = Room.databaseBuilder(this.getActivity().getApplicationContext(), NewsDatabase.class,"UserDataBase").allowMainThreadQueries().build();
-        NewsDao newsDao = build.getnewsDao();
-        News byid = newsDao.findByid(1);
-        if(byid == null){
-            viewById.setText("Welcome");
-        }else{
-            viewById.setText(byid.getContent());
-        }
+        final EditText viewById = (EditText)this.getActivity().findViewById(R.id.editText);
+        final NewsDatabase build = Room.databaseBuilder(this.getActivity().getApplicationContext(), NewsDatabase.class,"UserDataBase").build();
+        io.reactivex.Observable observable= io.reactivex.Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> subscriber) throws Exception {
+                NewsDao newsDao = build.getnewsDao();
+                News byid = newsDao.findByid(1);
+                if(byid == null){
+                    subscriber.onNext("Welcome");
+                }else{
+                    subscriber.onNext(byid.getContent());
+                }
 
+                subscriber.onComplete();
+            }
+        }).subscribeOn(Schedulers.io());
+
+
+        Observer<String> stringObserver=new Observer<String>() {
+
+
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(TAG,"onSubscribe"+d.toString());
+
+            }
+
+            @Override
+            public void onNext(final String s) {
+                Log.d(TAG,s.toString());
+                F1.this.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        viewById.setText(s);
+                    }
+                });
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                }).start();
+                viewById.setText(s);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG,"onError");
+            }
+
+            @Override
+            public void onComplete() {
+                //               Toast.makeText(getActivity(),"数据保存成功",Toast.LENGTH_LONG).show();
+                Log.d(TAG,"onComplete");
+            }
+        };
+        observable.subscribe(stringObserver);
     }
 }
