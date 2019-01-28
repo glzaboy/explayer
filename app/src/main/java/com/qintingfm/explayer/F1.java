@@ -64,11 +64,13 @@ public class F1 extends Fragment {
                     byid.setContent(s);
                     newsDao.updateNews(byid);
                 }
+
             }
 
             @Override
             public void onError(Throwable e) {
                 Log.d(TAG,"onError");
+                build.close();
             }
 
             @Override
@@ -80,6 +82,7 @@ public class F1 extends Fragment {
                         Toast.makeText(getActivity(),"数据保存成功",Toast.LENGTH_LONG).show();
                     }
                 });
+                build.close();
             }
         };
         observable.subscribe(stringObserver);
@@ -100,7 +103,7 @@ public class F1 extends Fragment {
                 }else{
                     subscriber.onNext(byid.getContent());
                 }
-
+                build.close();
                 subscriber.onComplete();
             }
         }).subscribeOn(Schedulers.io());
@@ -124,13 +127,7 @@ public class F1 extends Fragment {
                         viewById.setText(s);
                     }
                 });
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                    }
-//                }).start();
-                viewById.setText(s);
+//                viewById.setText(s);
             }
 
             @Override
