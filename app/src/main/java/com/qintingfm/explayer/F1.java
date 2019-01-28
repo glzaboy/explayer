@@ -17,6 +17,7 @@ import com.qintingfm.explayer.entity.News;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import org.reactivestreams.Subscriber;
@@ -40,9 +41,9 @@ public class F1 extends Fragment {
                 subscriber.onNext(viewById.getText().toString());
                 subscriber.onComplete();
             }
-        }).subscribeOn(Schedulers.io());
+        }).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.io());
         final NewsDatabase build = Room.databaseBuilder(this.getActivity().getApplicationContext(), NewsDatabase.class,"UserDataBase").build();
-        Observer<String> stringObserver=new Observer<String>() {
+        observable.subscribe(new Observer<String>() {
 
             NewsDao newsDao = build.getnewsDao();
             @Override
@@ -70,22 +71,42 @@ public class F1 extends Fragment {
             @Override
             public void onError(Throwable e) {
                 Log.d(TAG,"onError");
+
                 build.close();
             }
 
             @Override
             public void onComplete() {
                 Log.d(TAG,"onComplete");
-                F1.this.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getActivity(),"数据保存成功",Toast.LENGTH_LONG).show();
-                    }
-                });
                 build.close();
             }
-        };
-        observable.subscribe(stringObserver);
+        });
+        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(String o) {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if(getActivity()!=null) {
+                    Toast.makeText(getActivity(), "onError", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onComplete() {
+                if(getActivity()!=null){
+                    Toast.makeText(getActivity(),"数据保存成功1",Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
     }
 
     @Override
@@ -106,10 +127,8 @@ public class F1 extends Fragment {
                 build.close();
                 subscriber.onComplete();
             }
-        }).subscribeOn(Schedulers.io());
-
-
-        Observer<String> stringObserver=new Observer<String>() {
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        observable.subscribe(new Observer<String>() {
 
 
             @Override
@@ -121,12 +140,16 @@ public class F1 extends Fragment {
             @Override
             public void onNext(final String s) {
                 Log.d(TAG,s.toString());
-                F1.this.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        viewById.setText(s);
-                    }
-                });
+                if(viewById!=null){
+                    viewById.setText(s);
+                }
+
+//                F1.this.getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                });
 //                viewById.setText(s);
             }
 
@@ -140,7 +163,8 @@ public class F1 extends Fragment {
                 //               Toast.makeText(getActivity(),"数据保存成功",Toast.LENGTH_LONG).show();
                 Log.d(TAG,"onComplete");
             }
-        };
-        observable.subscribe(stringObserver);
+        });
+
+
     }
 }
