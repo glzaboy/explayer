@@ -10,6 +10,7 @@ import android.view.*;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.fegment.F1;
 import com.qintingfm.explayer.fegment.F2;
+import com.qintingfm.explayer.fegment.PlayList;
 
 public class NavActivity extends AppCompatActivity {
 
@@ -37,6 +38,12 @@ public class NavActivity extends AppCompatActivity {
                     fragmentTransaction2.commit();
                     return true;
                 case R.id.navigation_notifications:
+                    PlayList playList=new PlayList();
+                    FragmentManager fragmentManager3=getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction3 = fragmentManager3.beginTransaction();
+                    fragmentTransaction3.replace(R.id.fragment_layout,playList);
+                    fragmentTransaction3.addToBackStack(null);
+                    fragmentTransaction3.commit();
                     return true;
             }
             return false;
