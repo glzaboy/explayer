@@ -1,4 +1,4 @@
-package com.qintingfm.explayer;
+package com.qintingfm.explayer.activity;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+import com.qintingfm.explayer.R;
 
 public class MainActivity extends AppCompatActivity {
     String[] permissions={Manifest.permission.WRITE_EXTERNAL_STORAGE};

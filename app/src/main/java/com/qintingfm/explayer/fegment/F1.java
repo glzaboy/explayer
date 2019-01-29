@@ -1,4 +1,4 @@
-package com.qintingfm.explayer;
+package com.qintingfm.explayer.fegment;
 
 import android.arch.persistence.room.Room;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.dao.NewsDao;
 import com.qintingfm.explayer.database.NewsDatabase;
 import com.qintingfm.explayer.entity.News;
@@ -20,8 +21,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 public class F1 extends Fragment {
     static final String TAG=F1.class.getName();
@@ -71,7 +70,6 @@ public class F1 extends Fragment {
             @Override
             public void onError(Throwable e) {
                 Log.d(TAG,"onError");
-
                 build.close();
             }
 
@@ -84,12 +82,10 @@ public class F1 extends Fragment {
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
 
             @Override
             public void onNext(String o) {
-
             }
 
             @Override
@@ -134,7 +130,6 @@ public class F1 extends Fragment {
             @Override
             public void onSubscribe(Disposable d) {
                 Log.d(TAG,"onSubscribe"+d.toString());
-
             }
 
             @Override
@@ -143,14 +138,6 @@ public class F1 extends Fragment {
                 if(viewById!=null){
                     viewById.setText(s);
                 }
-
-//                F1.this.getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                    }
-//                });
-//                viewById.setText(s);
             }
 
             @Override
@@ -160,7 +147,6 @@ public class F1 extends Fragment {
 
             @Override
             public void onComplete() {
-                //               Toast.makeText(getActivity(),"数据保存成功",Toast.LENGTH_LONG).show();
                 Log.d(TAG,"onComplete");
             }
         });
