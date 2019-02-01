@@ -29,7 +29,7 @@ public class PlayList extends Fragment {
         viewById.setItemAnimator(new DefaultItemAnimator());
         viewById.addItemDecoration(new DividerItemDecoration(this.getActivity(),0));
         List<String> stringList=new ArrayList<>();
-        for (int i=0;i<2000;i++
+        for (int i=0;i<20;i++
              ) {
             stringList.add("china"+i);
 

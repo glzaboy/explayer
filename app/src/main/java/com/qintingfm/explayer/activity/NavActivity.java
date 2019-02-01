@@ -8,8 +8,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import com.qintingfm.explayer.R;
-import com.qintingfm.explayer.fegment.F1;
 import com.qintingfm.explayer.fegment.F2;
+import com.qintingfm.explayer.fegment.HomeFragment;
 import com.qintingfm.explayer.fegment.PlayList;
 
 public class NavActivity extends AppCompatActivity {
@@ -22,10 +22,10 @@ public class NavActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    F1 f1=new F1();
+                    HomeFragment homeFragment=new HomeFragment();
                     FragmentManager fragmentManager=getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_layout,f1);
+                    fragmentTransaction.replace(R.id.fragment_layout,homeFragment);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                     return true;
@@ -37,7 +37,7 @@ public class NavActivity extends AppCompatActivity {
                     fragmentTransaction2.addToBackStack(null);
                     fragmentTransaction2.commit();
                     return true;
-                case R.id.navigation_notifications:
+                case R.id.navigation_playlist:
                     PlayList playList=new PlayList();
                     FragmentManager fragmentManager3=getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction3 = fragmentManager3.beginTransaction();

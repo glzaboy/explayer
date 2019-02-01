@@ -16,6 +16,31 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <service
+                android:name=".mediastore.MediaService"
+                android:enabled="true"
+                android:exported="true">
+        </service>
+
+        <activity
+                android:name=".activity.UpdateLoclMediaActivity"
+                android:label="@string/title_activity_update_locl_media"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+                android:name=".ItemListActivity"
+                android:label="@string/title_item_list"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+                android:name=".ItemDetailActivity"
+                android:label="@string/title_item_detail"
+                android:parentActivityName=".ItemListActivity"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.qintingfm.explayer.ItemListActivity"/>
+        </activity>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -27,8 +52,10 @@
                 android:name=".activity.NavActivity"
                 android:label="@string/title_activity_nav">
         </activity>
-        <service android:name=".playercore.PlayerService"
-        android:process=""></service>
+
+        <service
+                android:name=".playercore.PlayerService"
+                android:process=""/>
     </application>
 
 </manifest>
