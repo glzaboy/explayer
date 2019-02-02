@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.qintingfm.explayer">
 
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.NFC"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
@@ -52,10 +52,6 @@
                 android:name=".activity.NavActivity"
                 android:label="@string/title_activity_nav">
         </activity>
-
-        <service
-                android:name=".playercore.PlayerService"
-                android:process=""/>
     </application>
 
 </manifest>

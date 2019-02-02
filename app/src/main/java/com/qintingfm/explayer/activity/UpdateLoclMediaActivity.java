@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.mediastore.MediaStoreCon;
+import com.qintingfm.explayer.mediastore.MediaStoreMessageNotification;
 
 public class UpdateLoclMediaActivity extends AppCompatActivity {
 
@@ -31,12 +32,13 @@ public class UpdateLoclMediaActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        MediaStoreCon.startService(this);
+        MediaStoreCon.attach(this,null);
+//        MediaStoreMessageNotification.notify(this,"hello",4);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        MediaStoreCon.stopService(this);
+//        MediaStoreCon.detach(this);
     }
 }

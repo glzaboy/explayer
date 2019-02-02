@@ -5,9 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Messenger;
+import android.os.*;
 import android.util.Log;
 import com.qintingfm.explayer.playercore.PlayerCore;
 
@@ -15,6 +13,8 @@ import java.util.List;
 
 public class MediaStoreCon {
     private static final String TAG=MediaStoreCon.class.getName();
+    private static Messenger uiMessenger;
+    public static boolean mBound = false;
 
     static private boolean isServiceRunning(Context packageContext){
         ActivityManager systemService = (ActivityManager)packageContext.getSystemService(packageContext.ACTIVITY_SERVICE);
@@ -47,23 +47,33 @@ public class MediaStoreCon {
     }
     public static synchronized void attach(Context packageContext, Handler handler){
         Intent intent = new Intent(packageContext, MediaService.class);
-//        packageContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        packageContext.bindService(intent, MediaStoreCon.mConnection, Context.BIND_AUTO_CREATE);
 //        PlayerCore.uiMessenger=new Messenger(handler);
 //        PlayerTimerTask.start();
     }
     public static synchronized void detach(Context packageContext){
 //        if (PlayerCore.uiMessenger!=null) {
 //            PlayerCore.uiMessenger=null;
-//            packageContext.unbindService(mConnection);
+            packageContext.unbindService(MediaStoreCon.mConnection);
 //            PlayerTimerTask.stop();
 //        }
     }
 //    /** Defines callbacks for service binding, passed to bindService() */
-//    private static ServiceConnection mConnection = new ServiceConnection() {
-//
-//        @Override
-//        public void onServiceConnected(ComponentName className,
-//                                       IBinder service) {
+    private static ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+
+            Log.d(TAG,"连接服务：");
+            MediaStoreCon.uiMessenger=new Messenger(service);
+            Message message= Message.obtain();
+            try {
+                MediaStoreCon.uiMessenger.send(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            MediaStoreCon.mBound=true;
 //            PlayerCore.MusicMessenger = new Messenger(service);
 //            Message message=Message.obtain();
 //            message.what=PlayerEumu.HANDLER_PLAYERREADY;
@@ -78,13 +88,18 @@ public class MediaStoreCon {
 //                e.printStackTrace();
 //            }
 //            mBound = true;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName arg0) {
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.d(TAG,"断开服务：");
+            if(MediaStoreCon.mBound){
+
+                MediaStoreCon.uiMessenger=null;
+            }
 //            mBound = false;
 //            PlayerCore.MusicMessenger=null;
-//        }
-//    };
+        }
+    };
 
 }
