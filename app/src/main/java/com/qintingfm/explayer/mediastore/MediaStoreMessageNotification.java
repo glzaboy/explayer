@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import com.qintingfm.explayer.R;
+import com.qintingfm.explayer.activity.NavActivity;
 
 /**
  * Helper class for showing and canceling new message
@@ -74,7 +75,7 @@ public class MediaStoreMessageNotification {
 
                 // Set required fields, including the small icon, the
                 // notification title, and text.
-                .setSmallIcon(R.drawable.ic_stat_new_message)
+                .setSmallIcon(R.drawable.ic_music_black_24dp)
                 .setContentTitle(title)
                 .setContentText(text)
 
@@ -82,7 +83,7 @@ public class MediaStoreMessageNotification {
 
                 // Use a default priority (recognized on devices running Android
                 // 4.1 or later)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
                 // Provide a large icon, shown with the notification in the
                 // notification drawer on devices running Android 3.0 or later.
@@ -110,15 +111,15 @@ public class MediaStoreMessageNotification {
                         PendingIntent.getActivity(
                                 context,
                                 0,
-                                new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")),
+                                new Intent(context, NavActivity.class),
                                 PendingIntent.FLAG_UPDATE_CURRENT))
 
                 // Show expanded text content on devices running Android 4.1 or
                 // later.
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(text)
-                        .setBigContentTitle(title)
-                        .setSummaryText("Dummy summary text"))
+//                .setStyle(new NotificationCompat.BigTextStyle()
+//                        .bigText(text)
+//                        .setBigContentTitle(title)
+//                        .setSummaryText("Dummy summary text"))
 
                 // Example additional actions for this notification. These will
                 // only show on devices running Android 4.1 or later, so you
