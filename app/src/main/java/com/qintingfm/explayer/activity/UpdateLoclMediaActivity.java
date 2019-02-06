@@ -29,7 +29,7 @@ public class UpdateLoclMediaActivity extends AppCompatActivity {
             }
         });
         mediaStoreNotification.setNotifyTag(this.getClass().getSimpleName());
-        NotificationCompat.Builder update = mediaStoreNotification.builderNotification(R.drawable.ic_dashboard_black_24dp, "Update", "Updata test.",mediaStoreNotification.createNotifyChannel(mediaStoreNotification.getNotifyTag()));
+        NotificationCompat.Builder update = mediaStoreNotification.getDefault(R.drawable.ic_dashboard_black_24dp, "Update", "Updata test.").setNubmber(5).getBuilder();
         mediaStoreNotification.notify(this,update.build());
     }
 

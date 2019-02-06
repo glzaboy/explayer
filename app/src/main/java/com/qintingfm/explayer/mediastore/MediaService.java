@@ -23,19 +23,15 @@ public class MediaService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-//        throw new UnsupportedOperationException("Not yet implemented");
         return messager.getBinder();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG,"onStartCommand");
-        MediaStoreNotification mediaStoreNotification=new MediaStoreNotification(this.getApplicationContext());
-        NotificationChannel notifyChannel = mediaStoreNotification.createNotifyChannel("Media Store scanf and update media");
-        NotificationCompat.Builder test = mediaStoreNotification.builderNotification(R.drawable.ic_music_black_24dp, "test", "I' ok",notifyChannel);
+        MediaStoreNotification mediaStoreNotification=new MediaStoreNotification(this.getApplicationContext(),"Media Store scanf and update media");
+        NotificationCompat.Builder test = mediaStoreNotification.getDefault(R.drawable.ic_music_black_24dp, "test", "I' ok").getBuilder();
         startForeground(1000,test.build());
-//        startForeground(1000,MediaStoreMessageNotification.buildNotification(this.getApplicationContext(),"test",1).build());
         return super.onStartCommand(intent, flags, startId);
     }
 }

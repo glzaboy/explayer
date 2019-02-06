@@ -16,6 +16,15 @@ import com.qintingfm.explayer.R;
 public abstract class NotificationHelp {
     String notifyTag = null;
     Context context = null;
+    NotificationCompat.Builder builder=null;
+
+    public NotificationCompat.Builder getBuilder() {
+        return builder;
+    }
+
+    public void setBuilder(NotificationCompat.Builder builder) {
+        this.builder = builder;
+    }
 
     public NotificationHelp(Context context, String notifyTag) {
         if(notifyTag==null){
@@ -40,33 +49,31 @@ public abstract class NotificationHelp {
     public void setContext(Context context) {
         this.context = context;
     }
+    public NotificationHelp getDefault(int rResourceIcon, String title, String content){
+        NotificationChannel notifyChannel = createNotifyChannel();
 
-    public NotificationCompat.Builder builderNotification(int rResourceIcon, String title, String content) {
-        return builderNotification(rResourceIcon, title, content, null);
-
-    }
-
-    public NotificationCompat.Builder builderNotification(int rResourceIcon, String title, String content, NotificationChannel notificationChannel) {
-        NotificationCompat.Builder builder;
-        if (notificationChannel != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getManager().createNotificationChannel(notificationChannel);
-            builder = new NotificationCompat.Builder(getContext(), notificationChannel.getId());
+        if (notifyChannel != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getManager().createNotificationChannel(notifyChannel);
+            builder = new NotificationCompat.Builder(getContext(), notifyChannel.getId());
         } else {
             builder = new NotificationCompat.Builder(getContext());
         }
         builder.setDefaults(Notification.DEFAULT_ALL);
-        Bitmap bitmap = getBitmap(context,rResourceIcon);
-        builder.setLargeIcon(bitmap);
         builder.setSmallIcon(rResourceIcon);
         builder.setContentTitle(title);
         builder.setContentText(content);
-        builder.setNumber(1);
         builder.setTicker(content);
+        builder.setNumber(1);
         builder.setWhen(System.currentTimeMillis());
         builder.setAutoCancel(true);
-        return builder;
+        Bitmap bitmap = getBitmap(context,rResourceIcon);
+        builder.setLargeIcon(bitmap);
+        return this;
     }
-
+    public NotificationHelp setNubmber(int number){
+        getBuilder().setNumber(number);
+        return this;
+    }
     /**
      * 将r.drawable中的资源转成bitmap;
      * @param context
@@ -113,9 +120,9 @@ public abstract class NotificationHelp {
         }
     }
 
-    public NotificationChannel createNotifyChannel(String channelName) {
+    public NotificationChannel createNotifyChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(String.valueOf(channelName.hashCode()), channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(String.valueOf(notifyTag.hashCode()), notifyTag, NotificationManager.IMPORTANCE_DEFAULT);
             return notificationChannel;
         }
         return null;
