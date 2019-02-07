@@ -12,14 +12,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
-import com.qintingfm.explayer.R;
 
-import java.net.URI;
 
 public abstract class NotificationHelp {
-    String notifyTag = null;
-    Context context = null;
-    NotificationCompat.Builder builder=null;
+    private String notifyTag ;
+    private Context context;
+    private NotificationCompat.Builder builder=null;
 
     public NotificationCompat.Builder getBuilder() {
         if(builder==null){
@@ -32,7 +30,7 @@ public abstract class NotificationHelp {
         if(notifyTag==null){
             notifyTag=this.getClass().getSimpleName();
         }
-        this.notifyTag = notifyTag;
+        setNotifyTag(notifyTag);
         this.context = context;
     }
 
@@ -44,7 +42,7 @@ public abstract class NotificationHelp {
         this.notifyTag = notifyTag;
     }
 
-    public Context getContext() {
+    protected Context getContext() {
         return context;
     }
 
@@ -67,7 +65,9 @@ public abstract class NotificationHelp {
         builder.setNumber(1);
         builder.setWhen(System.currentTimeMillis());
         builder.setAutoCancel(true);
-        builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+        }
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(content).setSummaryText(title).setSummaryText(title));
         return this;
     }
@@ -79,11 +79,6 @@ public abstract class NotificationHelp {
         getBuilder().setContentIntent(intent);
         return this;
     }
-//    public NotificationHelp setLargeIcon(URI uri){
-//        Bitmap bitmap = getBitmap(getContext(),rResourceIcon);
-//        getBuilder().setLargeIcon(bitmap);
-//        return this;
-//    }
     public NotificationHelp setLargeIcon(int rResourceIcon){
         Bitmap bitmap = getBitmap(getContext(),rResourceIcon);
         getBuilder().setLargeIcon(bitmap);
@@ -109,11 +104,11 @@ public abstract class NotificationHelp {
     /**
      * 将r.drawable中的资源转成bitmap;
      * @param context
-     * @param vectorDrawableId
+     * @param vectorDrawableId 资源ID
      * @return
      */
     public Bitmap getBitmap(Context context,int vectorDrawableId) {
-        Bitmap bitmap=null;
+        Bitmap bitmap;
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP){
             Drawable vectorDrawable = context.getDrawable(vectorDrawableId);
             bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
@@ -135,27 +130,26 @@ public abstract class NotificationHelp {
 
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
-    public void notify(final Context context, final Notification notification) {
+    public void notify(final Notification notification) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            getManager().notify(notifyTag, 0, notification);
+            getManager().notify(getNotifyTag(), 0, notification);
         } else {
-            getManager().notify(notifyTag.hashCode(), notification);
+            getManager().notify(getNotifyTag().hashCode(), notification);
         }
     }
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
-    public void cancel(final Context context, String tag) {
+    public void cancel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            getManager().cancel(notifyTag, 0);
+            getManager().cancel(getNotifyTag(), 0);
         } else {
-            getManager().cancel(notifyTag.hashCode());
+            getManager().cancel(getNotifyTag().hashCode());
         }
     }
 
-    public NotificationChannel createNotifyChannel() {
+    private NotificationChannel createNotifyChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(String.valueOf(notifyTag.hashCode()), notifyTag, NotificationManager.IMPORTANCE_DEFAULT);
-            return notificationChannel;
+            return new NotificationChannel(String.valueOf(getNotifyTag().hashCode()), getNotifyTag(), NotificationManager.IMPORTANCE_DEFAULT);
         }
         return null;
     }

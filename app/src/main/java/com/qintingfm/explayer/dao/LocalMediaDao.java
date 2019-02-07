@@ -4,6 +4,8 @@ import android.arch.persistence.room.*;
 import com.qintingfm.explayer.entity.LocalMedia;
 import com.qintingfm.explayer.entity.Media;
 
+import java.util.List;
+
 @Dao
 public interface LocalMediaDao {
     @Insert
@@ -18,4 +20,6 @@ public interface LocalMediaDao {
 
     @Query("SELECT * FROM LocalMedia where id=:id")
     public LocalMedia findByid(int id);
+    @Query("SELECT * FROM LocalMedia")
+    public List<LocalMedia> findAll();
 }

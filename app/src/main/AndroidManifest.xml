@@ -15,16 +15,17 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:fullBackupContent="false">
         <service
                 android:name=".mediastore.MediaService"
                 android:enabled="true"
-                android:exported="true" android:process=":mediastore">
+                android:exported="true" android:process=":mediastore" android:permission="glz is good">
         </service>
 
         <activity
-                android:name=".activity.UpdateLoclMediaActivity"
-                android:label="@string/title_activity_update_locl_media"
+                android:name=".activity.UpdateLocalMediaActivity"
+                android:label="@string/title_activity_update_local_media"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
@@ -44,7 +45,7 @@
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>

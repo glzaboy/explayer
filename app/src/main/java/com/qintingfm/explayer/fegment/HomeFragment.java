@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.qintingfm.explayer.R;
-import com.qintingfm.explayer.activity.UpdateLoclMediaActivity;
+import com.qintingfm.explayer.activity.UpdateLocalMediaActivity;
 
 
 /**
@@ -115,7 +115,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.update_local_media:
-                Intent intent=new Intent(this.getContext(), UpdateLoclMediaActivity.class);
+                Intent intent=new Intent(this.getContext(), UpdateLocalMediaActivity.class);
                 this.startActivity(intent);
                 break;
         }

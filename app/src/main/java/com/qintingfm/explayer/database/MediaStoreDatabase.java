@@ -7,7 +7,7 @@ import com.qintingfm.explayer.dao.MediaDao;
 import com.qintingfm.explayer.entity.LocalMedia;
 import com.qintingfm.explayer.entity.Media;
 
-@Database(entities = {Media.class, LocalMedia.class},exportSchema = false,version = 1)
+@Database(entities = {Media.class, LocalMedia.class},exportSchema = false,version = 2)
 public abstract class MediaStoreDatabase extends RoomDatabase {
      public abstract MediaDao  getMediaDao();
      public abstract LocalMediaDao getLocalMediaDao();

@@ -7,7 +7,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.*;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.fegment.F2;
@@ -68,9 +67,9 @@ public class NavActivity extends AppCompatActivity {
             decorView.setSystemUiVisibility(uiOptions);
         }
         setContentView(R.layout.activity_nav);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ic_music_black_24dp);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setIcon(R.drawable.ic_music_black_24dp);
+        BottomNavigationView navigation =  findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mOnNavigationItemSelectedListener.onNavigationItemSelected(navigation.getMenu().findItem(R.id.navigation_home));
     }

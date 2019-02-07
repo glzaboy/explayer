@@ -7,13 +7,13 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.*;
 import android.util.Log;
-import com.qintingfm.explayer.playercore.PlayerCore;
 
 import java.util.List;
 
 public class MediaStoreCon {
     private static final String TAG=MediaStoreCon.class.getName();
-    private static Messenger uiMessenger;
+    protected static Messenger uiMessenger;
+    private static Messenger MediaStoreMessenger;
     public static boolean mBound = false;
 
     static private boolean isServiceRunning(Context packageContext){
@@ -48,15 +48,15 @@ public class MediaStoreCon {
     public static synchronized void attach(Context packageContext, Handler handler){
         Intent intent = new Intent(packageContext, MediaService.class);
         packageContext.bindService(intent, MediaStoreCon.mConnection, Context.BIND_AUTO_CREATE);
-//        PlayerCore.uiMessenger=new Messenger(handler);
+        MediaStoreCon.uiMessenger=new Messenger(handler);
 //        PlayerTimerTask.start();
     }
     public static synchronized void detach(Context packageContext){
-//        if (PlayerCore.uiMessenger!=null) {
-//            PlayerCore.uiMessenger=null;
+        if (MediaStoreCon.uiMessenger!=null) {
+            MediaStoreCon.uiMessenger=null;
             packageContext.unbindService(MediaStoreCon.mConnection);
 //            PlayerTimerTask.stop();
-//        }
+        }
     }
 //    /** Defines callbacks for service binding, passed to bindService() */
     private static ServiceConnection mConnection = new ServiceConnection() {
@@ -66,28 +66,21 @@ public class MediaStoreCon {
                                        IBinder service) {
 
             Log.d(TAG,"连接服务：");
-            MediaStoreCon.uiMessenger=new Messenger(service);
+            MediaStoreCon.MediaStoreMessenger=new Messenger(service);
             Message message= Message.obtain();
             try {
-                MediaStoreCon.uiMessenger.send(message);
+                message.what=MediaStoreConstant.HANDLE_READY;
+                message.replyTo=MediaStoreCon.uiMessenger;
+                MediaStoreCon.MediaStoreMessenger.send(message);
+                Message message1=Message.obtain();
+                message1.what=MediaStoreConstant.HANDLE_READY;
+                MediaStoreCon.uiMessenger.send(message1);
+
+
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
             MediaStoreCon.mBound=true;
-//            PlayerCore.MusicMessenger = new Messenger(service);
-//            Message message=Message.obtain();
-//            message.what=PlayerEumu.HANDLER_PLAYERREADY;
-//            message.replyTo=PlayerCore.uiMessenger;
-//            Log.d(TAG,"Player SERVICE READY ");
-//            try {
-//                PlayerCore.MusicMessenger.send(message);
-//                Message message2=Message.obtain();
-//                message2.what=PlayerEumu.HANDLER_PLAYERREADY;
-//                PlayerCore.uiMessenger.send(message2);
-//            } catch (RemoteException e) {
-//                e.printStackTrace();
-//            }
-//            mBound = true;
         }
 
         @Override
@@ -96,10 +89,21 @@ public class MediaStoreCon {
             if(MediaStoreCon.mBound){
 
                 MediaStoreCon.uiMessenger=null;
+                MediaStoreCon.mBound=false;
             }
-//            mBound = false;
-//            PlayerCore.MusicMessenger=null;
+            MediaStoreCon.MediaStoreMessenger=null;
         }
     };
+    public static void scanfLocalMedia(){
+        Log.d(TAG,"MediaStoreCon scanfLocalMedia");
+        Message message=Message.obtain();
+        message.what=MediaStoreConstant.HANDLE_SCAN_LOCAL;
+        message.replyTo=MediaStoreCon.uiMessenger;
+        try {
+            MediaStoreCon.MediaStoreMessenger.send(message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

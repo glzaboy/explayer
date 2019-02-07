@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,@android.support.annotation.NonNull String[] permissions,@android.support.annotation.NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (PERMISSIONS_REQUEST_CODE == requestCode) {
             int grantAll=1;
