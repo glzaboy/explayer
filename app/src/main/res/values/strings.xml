@@ -2,7 +2,7 @@
     <string name="app_name">Ex Player</string>
     <string name="title_activity_nav">NavActivity</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_player">Player</string>
     <string name="title_playlist">Play List</string>
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>

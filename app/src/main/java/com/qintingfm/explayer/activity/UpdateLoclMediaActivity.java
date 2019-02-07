@@ -1,5 +1,7 @@
 package com.qintingfm.explayer.activity;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -7,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.RemoteViews;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.mediastore.MediaStoreNotification;
 
@@ -29,7 +32,11 @@ public class UpdateLoclMediaActivity extends AppCompatActivity {
             }
         });
         mediaStoreNotification.setNotifyTag(this.getClass().getSimpleName());
-        NotificationCompat.Builder update = mediaStoreNotification.getDefault(R.drawable.ic_dashboard_black_24dp, "Update", "Updata test.").setNubmber(5).getBuilder();
+        RemoteViews remoteViews=new RemoteViews(this.getPackageName(),R.layout.sample_my_view);
+        remoteViews.setTextViewText(R.id.title,"this is test");
+        remoteViews.setOnClickPendingIntent(R.id.title, PendingIntent.getActivity(this,100,new Intent(this,NavActivity.class),PendingIntent.FLAG_UPDATE_CURRENT));
+        NotificationCompat.Builder update = mediaStoreNotification.getDefault(R.drawable.ic_dashboard_black_24dp, "Update", "Updata test.").setNubmber(5).setCustomContentView(remoteViews).getBuilder();
+        mediaStoreNotification.addAction(R.drawable.ic_pause_black_24dp,"test",PendingIntent.getActivity(this,100,new Intent(this,NavActivity.class),PendingIntent.FLAG_UPDATE_CURRENT));
         mediaStoreNotification.notify(this,update.build());
     }
 

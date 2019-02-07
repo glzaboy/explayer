@@ -11,7 +11,10 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.widget.RemoteViews;
 import com.qintingfm.explayer.R;
+
+import java.net.URI;
 
 public abstract class NotificationHelp {
     String notifyTag = null;
@@ -19,11 +22,10 @@ public abstract class NotificationHelp {
     NotificationCompat.Builder builder=null;
 
     public NotificationCompat.Builder getBuilder() {
+        if(builder==null){
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
         return builder;
-    }
-
-    public void setBuilder(NotificationCompat.Builder builder) {
-        this.builder = builder;
     }
 
     public NotificationHelp(Context context, String notifyTag) {
@@ -51,7 +53,6 @@ public abstract class NotificationHelp {
     }
     public NotificationHelp getDefault(int rResourceIcon, String title, String content){
         NotificationChannel notifyChannel = createNotifyChannel();
-
         if (notifyChannel != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getManager().createNotificationChannel(notifyChannel);
             builder = new NotificationCompat.Builder(getContext(), notifyChannel.getId());
@@ -66,8 +67,39 @@ public abstract class NotificationHelp {
         builder.setNumber(1);
         builder.setWhen(System.currentTimeMillis());
         builder.setAutoCancel(true);
-        Bitmap bitmap = getBitmap(context,rResourceIcon);
-        builder.setLargeIcon(bitmap);
+        builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+        builder.setStyle(new NotificationCompat.BigTextStyle().bigText(content).setSummaryText(title).setSummaryText(title));
+        return this;
+    }
+    public NotificationHelp addAction(int icon, java.lang.CharSequence title, android.app.PendingIntent intent){
+        getBuilder().addAction(icon,title,intent);
+        return this;
+    }
+    public NotificationHelp setOnClick(android.app.PendingIntent intent){
+        getBuilder().setContentIntent(intent);
+        return this;
+    }
+//    public NotificationHelp setLargeIcon(URI uri){
+//        Bitmap bitmap = getBitmap(getContext(),rResourceIcon);
+//        getBuilder().setLargeIcon(bitmap);
+//        return this;
+//    }
+    public NotificationHelp setLargeIcon(int rResourceIcon){
+        Bitmap bitmap = getBitmap(getContext(),rResourceIcon);
+        getBuilder().setLargeIcon(bitmap);
+        return this;
+    }
+    public NotificationHelp setCustomContentView(RemoteViews remoteViews){
+
+        return setCustomContentView(remoteViews,null);
+    }
+    public NotificationHelp setCustomContentView(RemoteViews remoteViews, RemoteViews bigRemoteViews){
+        getBuilder()
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle());
+        if(bigRemoteViews!=null){
+            getBuilder().setCustomBigContentView(bigRemoteViews);
+        }
+        getBuilder().setCustomContentView(remoteViews);
         return this;
     }
     public NotificationHelp setNubmber(int number){
