@@ -34,26 +34,12 @@ public class PlayList extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-
-
-
-
-
-
-//        View inflate = inflater.inflate(R.layout.fegment_playlist, container, false);
         View view=inflater.inflate(R.layout.fegment_playlist,container,false);
-        final RecyclerView viewById = (RecyclerView) view.findViewById(R.id.playlist);
+        final RecyclerView viewById = view.findViewById(R.id.playlist);
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this.getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         viewById.setItemAnimator(new DefaultItemAnimator());
         viewById.addItemDecoration(new DividerItemDecoration(this.getContext(),0));
-//        List<String> stringList=new ArrayList<>();
-//        for (int i=0;i<200;i++
-//        ) {
-//            stringList.add("china"+i);
-//
-//        }
         final RecyclerAdapter recyclerAdpater = new RecyclerAdapter(new ArrayList<LocalMedia>());
         recyclerAdpater.setmOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
             @Override
@@ -77,10 +63,7 @@ public class PlayList extends Fragment {
         });
         viewById.setAdapter(recyclerAdpater );
         viewById.setLayoutManager(linearLayoutManager);
-
-
         final MediaStoreDatabase media_store_database = Room.databaseBuilder(this.getContext().getApplicationContext(), MediaStoreDatabase.class, "Media Store Database").build();
-
         final LocalMediaDao localMediaDao = media_store_database.getLocalMediaDao();
         Observable<LocalMedia> localMediaObservable = Observable.create(new ObservableOnSubscribe<LocalMedia>() {
             @Override
@@ -117,11 +100,6 @@ public class PlayList extends Fragment {
                     }
                 }
         );
-
-
-
-
-
         return view;
     }
 }

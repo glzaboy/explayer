@@ -31,12 +31,11 @@ public class MediaService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-//        Stetho.initializeWithDefaults(this.getApplicationContext());
-        MediaStoreNotification mediaStoreNotification=new MediaStoreNotification(this.getApplicationContext(),"MediaService");
-        mediaStoreNotification.getDefault(R.drawable.ic_music_black_24dp, "MediaService", " Media Store scan and update media").setOnClick(
-                PendingIntent.getActivity(this,0x001,new Intent(this.getApplicationContext(),NavActivity.class),PendingIntent.FLAG_UPDATE_CURRENT)
-        );
-        startForeground(1000,mediaStoreNotification.getBuilder().build());
+//        MediaStoreNotification mediaStoreNotification=new MediaStoreNotification(this.getApplicationContext(),"MediaService");
+//        mediaStoreNotification.getDefault(R.drawable.ic_music_black_24dp, "MediaService", " Media Store scan and update media").setOnClick(
+//                PendingIntent.getActivity(this,0x001,new Intent(this.getApplicationContext(),NavActivity.class),PendingIntent.FLAG_UPDATE_CURRENT)
+//        );
+//        startForeground(1000,mediaStoreNotification.getBuilder().build());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.playercore;
+package com.qintingfm.explayer.player;
 
 import android.media.MediaPlayer;
 import android.util.Log;

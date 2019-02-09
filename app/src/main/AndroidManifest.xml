@@ -20,7 +20,12 @@
         <service
                 android:name=".mediastore.MediaService"
                 android:enabled="true"
-                android:exported="true" android:process=":mediastore" android:permission="glz is good">
+                android:exported="true" android:process=":mediaStore" android:permission="glz is good">
+        </service>
+        <service
+                android:name=".player.PlayerService"
+                android:enabled="true"
+                android:exported="true" android:process=":playCore" android:permission="glz is good">
         </service>
 
         <activity
@@ -28,25 +33,63 @@
                 android:label="@string/title_activity_update_local_media"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity
-                android:name=".ItemListActivity"
-                android:label="@string/title_item_list"
-                android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
-                android:name=".ItemDetailActivity"
-                android:label="@string/title_item_detail"
-                android:parentActivityName=".ItemListActivity"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.qintingfm.explayer.ItemListActivity"/>
-        </activity>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="audio/mpeg" />
+                <data android:mimeType="audio/x-mpeg" />
+                <data android:mimeType="audio/wma" />
+                <data android:mimeType="audio/x-ms-wma" />
+                <data android:mimeType="audio/aac" />
+                <data android:mimeType="audio/x-aac" />
+                <data android:mimeType="audio/aac-adts" />
+                <data android:mimeType="audio/flac" />
+                <data android:mimeType="audio/x-flac" />
+                <data android:mimeType="application/x-flac" />
+                <data android:mimeType="audio/wav" />
+                <data android:mimeType="audio/x-wav" />
+                <data android:mimeType="audio/x-ape" />
+                <data android:mimeType="audio/mp4" />
+                <data android:mimeType="audio/mp3" />
+                <data android:mimeType="audio/m4a" />
+                <data android:mimeType="audio/ogg" />
+                <data android:mimeType="audio/webm" />
+                <data android:mimeType="audio/amr" />
+                <data android:mimeType="audio/mid" />
+                <data android:mimeType="audio/midi" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="application/x-ogg" />
+                <data android:mimeType="application/itunes" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:host="*" />
+                <data android:pathPattern=".*.flac" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:host="*" />
+                <data android:pathPattern=".*.FLAC" />
             </intent-filter>
         </activity>
         <activity

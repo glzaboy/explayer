@@ -9,10 +9,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.qintingfm.explayer.R;
 
-public class F2 extends Fragment {
+public class Player extends Fragment {
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().getIntent();
+
+
+
+
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.f2, container, false);
+        return inflater.inflate(R.layout.fegment_player, container, false);
     }
 }

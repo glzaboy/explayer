@@ -17,7 +17,7 @@ public class MediaStoreCon {
     public static boolean mBound = false;
 
     static private boolean isServiceRunning(Context packageContext){
-        ActivityManager systemService = (ActivityManager)packageContext.getSystemService(packageContext.ACTIVITY_SERVICE);
+        ActivityManager systemService = (ActivityManager)packageContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices = systemService.getRunningServices(50);
         for (ActivityManager.RunningServiceInfo runningServiceInfo:runningServices) {
             if(runningServiceInfo.service.getClassName().equals(MediaService.class.getName())){

@@ -1,5 +1,6 @@
 package com.qintingfm.explayer.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,6 +27,11 @@ public class UpdateLocalMediaActivity extends AppCompatActivity {
                     MediaStoreCon.scanfLocalMedia();
                     break;
                 case MediaStoreConstant.HANDLE_SCAN_FINISHED:
+                    Intent intent=new Intent(UpdateLocalMediaActivity.this,NavActivity.class);
+                    intent.setData(getIntent().getData());
+                    intent.putExtra("play_source","UpdateLocalMedia");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                     UpdateLocalMediaActivity.this.finish();
                     break;
             }

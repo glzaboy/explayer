@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -63,6 +64,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
                 return false;
             }
         });
+        vh.itemView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                return this.onTouch(v,event);
+            }
+        });
 //        int itemViewType = getItemViewType(i);
         vh.title.setText(data.get(i).getTitle());
         vh.title.setTag(i);
@@ -92,6 +100,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
         vh.data.setTag(i);
         vh.duration.setText(String.valueOf(data.get(i).getDuration()));
         vh.duration.setTag(i);
+
+
 //        vh.title.setOnClickListener(new View.OnClickListener(View v){
 //            @Override
 //            public void onClick(TextView v) {

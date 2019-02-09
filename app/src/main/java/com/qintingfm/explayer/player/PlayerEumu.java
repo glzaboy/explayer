@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.playercore;
+package com.qintingfm.explayer.player;
 
 public class PlayerEumu {
     public static final int HANDLE_DEFAULT=0;

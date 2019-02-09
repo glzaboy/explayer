@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.playercore;
+package com.qintingfm.explayer.player;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -28,7 +28,7 @@ public class PlayerCore {
     static String url;
     static Messenger uiMessenger;
     static private boolean isServiceRunning(Context packageContext){
-        ActivityManager systemService = (ActivityManager)packageContext.getSystemService(packageContext.ACTIVITY_SERVICE);
+        ActivityManager systemService = (ActivityManager)packageContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices = systemService.getRunningServices(50);
         for (ActivityManager.RunningServiceInfo runningServiceInfo:runningServices) {
             if(runningServiceInfo.service.getClassName().equals(PlayerService.class.getName())){
@@ -267,7 +267,7 @@ public class PlayerCore {
             }
             switch (msg.what){
                 case PlayerEumu.HANDLE_OPEN_URL:
-                    Map<String, String> obj = (Map<String, String>) (Map<String, String>) msg.obj;
+                    Map<String, String> obj = (Map<String, String>) msg.obj;
                     if(obj.get("url")!=null){
                         try {
                             Log.d(TAG,"music start play{}"+obj.get("url"));

@@ -1,17 +1,18 @@
 package com.qintingfm.explayer.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.*;
+import android.view.MenuItem;
+import android.view.View;
 import com.qintingfm.explayer.R;
-import com.qintingfm.explayer.fegment.F2;
 import com.qintingfm.explayer.fegment.HomeFragment;
 import com.qintingfm.explayer.fegment.PlayList;
-import com.qintingfm.explayer.mediastore.MediaStoreCon;
+import com.qintingfm.explayer.fegment.Player;
 
 public class NavActivity extends AppCompatActivity {
 
@@ -21,70 +22,83 @@ public class NavActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    HomeFragment homeFragment=new HomeFragment();
-                    FragmentManager fragmentManager=getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_layout,homeFragment);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                    return true;
-                case R.id.navigation_dashboard:
-                    F2 f2=new F2();
-                    FragmentManager fragmentManager2=getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
-                    fragmentTransaction2.replace(R.id.fragment_layout,f2);
-                    fragmentTransaction2.addToBackStack(null);
-                    fragmentTransaction2.commit();
-                    return true;
+                    HomeFragment homeFragment = new HomeFragment();
+                    fragmentTransaction.replace(R.id.fragment_layout, homeFragment);
+                    break;
+                case R.id.navigation_player:
+                    Player fegment_player = new Player();
+                    fragmentTransaction.replace(R.id.fragment_layout, fegment_player);
+                    break;
                 case R.id.navigation_playlist:
-                    PlayList playList=new PlayList();
-                    FragmentManager fragmentManager3=getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction3 = fragmentManager3.beginTransaction();
-                    fragmentTransaction3.replace(R.id.fragment_layout,playList);
-                    fragmentTransaction3.addToBackStack(null);
-                    fragmentTransaction3.commit();
-                    return true;
+                    PlayList playList = new PlayList();
+                    fragmentTransaction.replace(R.id.fragment_layout, playList);
+                    break;
             }
-            return false;
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+            return true;
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        getSupportActionBar().hide();
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
 //            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //        }else{
-            View decorView = getWindow().getDecorView();
-            // Hide the status bar.
-            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
 //        }
         setContentView(R.layout.activity_nav);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setIcon(R.drawable.ic_music_black_24dp);
-        BottomNavigationView navigation =  findViewById(R.id.navigation);
+        BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        mOnNavigationItemSelectedListener.onNavigationItemSelected(navigation.getMenu().findItem(R.id.navigation_home));
+
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null && intent.getExtras().getString("play_source") != null) {
+            switch (intent.getExtras().getString("play_source").toUpperCase()) {
+                case "LAUNCHER":
+                    if(intent.getData()!=null){
+                        navigation.setSelectedItemId(R.id.navigation_player);
+                    }else{
+                        navigation.setSelectedItemId(R.id.navigation_home);
+                    }
+
+
+                    break;
+                case "UPDATELOCALMEDIA":
+                    navigation.setSelectedItemId(R.id.navigation_playlist);
+                    break;
+                default:
+                    navigation.setSelectedItemId(R.id.navigation_home);
+            }
+        } else {
+            navigation.setSelectedItemId(R.id.navigation_home);
+        }
+
+
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if(hasFocus){
+        if (hasFocus) {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
 //                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //            }else{
-                View decorView = getWindow().getDecorView();
-                // Hide the status bar.
-                int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-                decorView.setSystemUiVisibility(uiOptions);
+            View decorView = getWindow().getDecorView();
+            // Hide the status bar.
+            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
 //            }
         }
     }
@@ -92,6 +106,5 @@ public class NavActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        MediaStoreCon.startService(this);
     }
 }
