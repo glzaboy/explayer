@@ -69,6 +69,9 @@ public class PlayList extends Fragment {
                     case R.id.displayName:
                         Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();
                         break;
+                    case R.id.data:
+                        Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();
+                        break;
                 }
             }
         });

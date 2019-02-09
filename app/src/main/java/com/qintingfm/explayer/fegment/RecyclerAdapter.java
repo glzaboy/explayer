@@ -48,11 +48,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
         vh.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG,"on click"+getItemCount());
                 if(mOnItemClickListener!=null){
                     View viewById = v.findViewById(R.id.data);
                     mOnItemClickListener.onItemClick(viewById);
                 }
 
+            }
+        });
+        vh.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d(TAG,"Login click"+getItemCount());
+                return false;
             }
         });
 //        int itemViewType = getItemViewType(i);
