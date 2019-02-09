@@ -5,15 +5,15 @@ import com.qintingfm.explayer.entity.Media;
 @Dao
 public interface MediaDao {
     @Insert
-    public void insertMedia(Media... news);
+    void insertMedia(Media... media);
 
     @Update
-    public void updateMedia(Media... news);
+    void updateMedia(Media... media);
 
 
     @Delete
-    public void deleteMedia(Media... news);
+    void deleteMedia(Media... media);
 
     @Query("SELECT * FROM Media where id=:id")
-    public Media findByid(int id);
+    Media findById(int id);
 }

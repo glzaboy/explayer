@@ -9,17 +9,17 @@ public class Media {
     @PrimaryKey(autoGenerate=true)
     public int id;
     @ColumnInfo(name = "data")
-    String data;
+    private String data;
     @ColumnInfo(name = "duration")
-    int duration;
+    private int duration;
     @ColumnInfo(name = "artist")
-    String artist;
+    private String artist;
     @ColumnInfo(name = "title")
-    String title;
+    private String title;
     @ColumnInfo(name = "displayName")
-    String displayName;
+    private String displayName;
     @ColumnInfo(name = "playCount")
-    int playCount;
+    private int playCount;
 
     public int getId() {
         return id;

@@ -2,6 +2,7 @@ package com.qintingfm.explayer.fegment;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,24 +14,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
-    private List<LocalMedia> mDatas;
-    OnItemClickListener mOnItemClickListener;
+    private static final String TAG=RecyclerAdapter.class.getName();
+    private List<LocalMedia> data;
+    private OnItemClickListener mOnItemClickListener;
     public RecyclerAdapter(List<LocalMedia> data) {
-        this.mDatas=data;
+        this.data=data;
     }
 
-    public List<LocalMedia> getmDatas() {
-        return mDatas;
+    public List<LocalMedia> getData() {
+        return data;
     }
 
-    public void setmDatas(List<LocalMedia> mDatas) {
-        this.mDatas = mDatas;
+    public void setData(List<LocalMedia> data) {
+        this.data = data;
     }
     public void clearData() {
-        this.mDatas = new ArrayList<>();
+        this.data = new ArrayList<>();
     }
     public void addData(LocalMedia localMedia) {
-        this.mDatas.add(localMedia);
+        this.data.add(localMedia);
     }
 
 
@@ -43,34 +45,44 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
 
     @Override
     public void onBindViewHolder(@NonNull Vh vh, int i) {
+        vh.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOnItemClickListener!=null){
+                    View viewById = v.findViewById(R.id.data);
+                    mOnItemClickListener.onItemClick(viewById);
+                }
+
+            }
+        });
 //        int itemViewType = getItemViewType(i);
-        vh.title.setText(mDatas.get(i).getTitle());
+        vh.title.setText(data.get(i).getTitle());
         vh.title.setTag(i);
-        vh.title.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mOnItemClickListener!=null){
-//                    int tag = (int)v.getTag();
-                    mOnItemClickListener.onItemClick(v);
-                }
-            }
-        });
-        vh.artist.setText(mDatas.get(i).getArtist());
+//        vh.title.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(mOnItemClickListener!=null){
+////                    int tag = (int)v.getTag();
+//                    mOnItemClickListener.onItemClick(v);
+//                }
+//            }
+//        });
+        vh.artist.setText(data.get(i).getArtist());
         vh.artist.setTag(i);
-        vh.displayName.setText(mDatas.get(i).getDisplayName());
+        vh.displayName.setText(data.get(i).getDisplayName());
         vh.displayName.setTag(i);
-        vh.displayName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mOnItemClickListener!=null){
-//                    int tag = (int)v.getTag();
-                    mOnItemClickListener.onItemClick(v);
-                }
-            }
-        });
-        vh.data.setText(mDatas.get(i).getData());
+//        vh.displayName.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(mOnItemClickListener!=null){
+////                    int tag = (int)v.getTag();
+//                    mOnItemClickListener.onItemClick(v);
+//                }
+//            }
+//        });
+        vh.data.setText(data.get(i).getData());
         vh.data.setTag(i);
-        vh.duration.setText(String.valueOf(mDatas.get(i).getDuration()));
+        vh.duration.setText(String.valueOf(data.get(i).getDuration()));
         vh.duration.setTag(i);
 //        vh.title.setOnClickListener(new View.OnClickListener(View v){
 //            @Override
@@ -82,17 +94,23 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
 
     @Override
     public int getItemCount() {
-        return mDatas.size();
+        return data.size();
     }
 
     public static class Vh extends RecyclerView.ViewHolder{
-        TextView title;
-        TextView artist;
-        TextView displayName;
-        TextView data;
-        TextView duration;
+        private TextView title;
+        private TextView artist;
+        private TextView displayName;
+        private TextView data;
+        private TextView duration;
         public Vh(@NonNull View itemView) {
             super(itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG,"TEST"+getAdapterPosition());
+                }
+            });
             title = itemView.findViewById(R.id.title);
             artist = itemView.findViewById(R.id.artist);
             displayName = itemView.findViewById(R.id.displayName);

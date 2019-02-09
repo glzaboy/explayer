@@ -17,21 +17,6 @@ import java.lang.ref.WeakReference;
 
 public class UpdateLocalMediaActivity extends AppCompatActivity {
     final static String TAG= UpdateLocalMediaActivity.class.getName();
-//    final Handler mHandler=new Handler(){
-//        @Override
-//        public void handleMessage(Message msg) {
-//            switch (msg.what){
-//                case MediaStoreConstant.HANDLE_READY:
-//                    Log.d(UpdateLocalMediaActivity.TAG,"Media store SERVICE READY ");
-//                    MediaStoreCon.scanfLocalMedia();
-//                    break;
-//                case MediaStoreConstant.HANDLE_SCAN_FINISHED:
-//                    finish();
-//                break;
-//            }
-//            super.handleMessage(msg);
-//        }
-//    };
     WeakReference<Handler> mHandler = new WeakReference<Handler>(new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -41,7 +26,7 @@ public class UpdateLocalMediaActivity extends AppCompatActivity {
                     MediaStoreCon.scanfLocalMedia();
                     break;
                 case MediaStoreConstant.HANDLE_SCAN_FINISHED:
-                    finish();
+                    UpdateLocalMediaActivity.this.finish();
                     break;
             }
             super.handleMessage(msg);

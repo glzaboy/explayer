@@ -60,7 +60,7 @@ public class MediaService extends Service {
         Observable<LocalMedia> localMediaObservable = Observable.create(new ObservableOnSubscribe<LocalMedia>() {
             @Override
             public void subscribe(ObservableEmitter<LocalMedia> subscriber)  {
-                if(!query.moveToFirst()){
+                if(query.moveToFirst()){
                     int indexData=query.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
                     int indexDisplayName=query.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME);
                     int indexDuration=query.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION);
