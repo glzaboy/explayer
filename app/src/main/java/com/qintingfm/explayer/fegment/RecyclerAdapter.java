@@ -64,13 +64,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
                 return false;
             }
         });
-        vh.itemView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                return this.onTouch(v,event);
-            }
-        });
+//        vh.itemView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                return this.onTouch(v,event);
+//            }
+//        });
 //        int itemViewType = getItemViewType(i);
         vh.title.setText(data.get(i).getTitle());
         vh.title.setTag(i);

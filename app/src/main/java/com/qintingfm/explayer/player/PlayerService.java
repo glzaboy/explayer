@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
+import android.support.v4.media.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 import com.qintingfm.explayer.R;
@@ -28,11 +29,11 @@ public class PlayerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            NotificationChannel notificationChannel = new NotificationChannel("PlayerCoreNotify", "App Service", NotificationManager.IMPORTANCE_DEFAULT);
-            nm.createNotificationChannel(notificationChannel);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//            NotificationChannel notificationChannel = new NotificationChannel("PlayerCoreNotify", "App Service", NotificationManager.IMPORTANCE_DEFAULT);
+//            nm.createNotificationChannel(notificationChannel);
+//        }
 //        Notification.Builder builder = new Notification.Builder(this.getApplicationContext(), "PlayerCoreNotify");
 ////        builder.setContentText("Player Core");
 //        builder.setContentTitle("我是标题")
@@ -58,7 +59,16 @@ public class PlayerService extends Service {
         super.onCreate();
         PlayerNotification playerNotificatio=new PlayerNotification(this.getApplicationContext(),"Ex Player Core");
         playerNotificatio.getDefault(R.drawable.ic_music_black_24dp,"Explayer","播放");
+
+        playerNotificatio.addAction(android.R.drawable.ic_media_previous,"",null);
+//        playerNotificatio.addAction(android.R.drawable.ic_media_rew,"",null);
+        playerNotificatio.addAction(android.R.drawable.ic_media_play,"",null);
+        playerNotificatio.addAction(android.R.drawable.ic_media_next,"",null);
+//        playerNotificatio.addAction(android.R.drawable.ic_media_ff,"",null);
+        playerNotificatio.setStyle(new NotificationCompat.MediaStyle().setShowCancelButton(true).setShowActionsInCompactView(0,1,2));
+        playerNotificatio.setNubmber(0);
         startForeground(100,playerNotificatio.getBuilder().build());
+
 
 
 

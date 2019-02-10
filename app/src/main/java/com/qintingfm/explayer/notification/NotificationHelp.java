@@ -101,6 +101,10 @@ public abstract class NotificationHelp {
         getBuilder().setNumber(number);
         return this;
     }
+    public NotificationHelp setStyle(NotificationCompat.Style style){
+        getBuilder().setStyle(style);
+        return this;
+    }
     /**
      * 将r.drawable中的资源转成bitmap;
      * @param context

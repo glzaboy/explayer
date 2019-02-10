@@ -18,6 +18,7 @@ import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
 import com.qintingfm.explayer.entity.LocalMedia;
+import com.qintingfm.explayer.player.PlayerCore;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -56,6 +57,7 @@ public class PlayList extends Fragment {
                         Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();
                         break;
                     case R.id.data:
+                        PlayerCore.startService(PlayList.this.getActivity().getApplicationContext());
                         Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();
                         break;
                 }
