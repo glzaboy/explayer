@@ -196,6 +196,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 //        playerNotificatio.addAction(android.R.drawable.ic_media_ff,"",null);
         playerNotificatio.setStyle(new NotificationCompat.MediaStyle().setShowCancelButton(true).setShowActionsInCompactView(0, 1, 2).setMediaSession(mediaSessionCompat.getSessionToken()));
         playerNotificatio.setNubmber(0);
+        playerNotificatio.setLargeIcon(R.drawable.pig);
         startForeground(100, playerNotificatio.getBuilder().build());
         Log.d(TAG, "PlayerService onCreate");
     }
