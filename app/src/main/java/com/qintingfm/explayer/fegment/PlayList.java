@@ -1,6 +1,8 @@
 package com.qintingfm.explayer.fegment;
 
 import android.arch.persistence.room.Room;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +21,8 @@ import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
 import com.qintingfm.explayer.entity.LocalMedia;
 import com.qintingfm.explayer.player.PlayerCore;
+import com.qintingfm.explayer.player.PlayerEumu;
+import com.qintingfm.explayer.player.PlayerService;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -27,6 +31,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +63,10 @@ public class PlayList extends Fragment {
                         break;
                     case R.id.data:
                         PlayerCore.startService(PlayList.this.getActivity().getApplicationContext());
+                        Intent intent=new Intent(PlayList.this.getActivity(), PlayerService.class);
+                        intent.setAction(String.valueOf(PlayerEumu.HANDLE_OPEN_URL));
+                        intent.setData(Uri.parse(view1.getText().toString()));
+                        PlayList.this.getActivity().startService(intent);
                         Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();
                         break;
                 }
