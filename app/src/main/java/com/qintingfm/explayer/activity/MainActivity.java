@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.qintingfm.explayer.R;
 
 public class MainActivity extends AppCompatActivity {
-    String[] permissions={Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    String[] permissions={Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE};
     final int PERMISSIONS_REQUEST_CODE=123;
     public MainActivity() {
     }

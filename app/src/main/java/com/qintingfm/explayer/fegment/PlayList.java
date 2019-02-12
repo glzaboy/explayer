@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -64,7 +65,7 @@ public class PlayList extends Fragment {
                     case R.id.data:
                         PlayerCore.startService(PlayList.this.getActivity().getApplicationContext());
                         Intent intent=new Intent(PlayList.this.getActivity(), PlayerService.class);
-                        intent.setAction(String.valueOf(PlayerEumu.HANDLE_OPEN_URL));
+                        intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_FROM_URI));
                         intent.setData(Uri.parse(view1.getText().toString()));
                         PlayList.this.getActivity().startService(intent);
                         Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();

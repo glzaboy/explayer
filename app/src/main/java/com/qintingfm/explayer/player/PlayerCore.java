@@ -58,22 +58,22 @@ public class PlayerCore {
             Log.d(TAG,"停止服务：");
         }
     }
-
-    public static void openUrl2(String url) throws IOException {
-        if(PlayerCore.player==null){
-            PlayerCore.player=new MediaPlayer();
-            PlayerCore.player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        }
-        PlayerCore.player.reset();
-        PlayerCore.player.setDataSource(url);
-        PlayerCore.player.setOnPreparedListener(PlayerCore.playerEvent);
-        PlayerCore.player.setOnErrorListener(PlayerCore.playerEvent);
-        PlayerCore.player.setOnBufferingUpdateListener(PlayerCore.playerEvent);
-        PlayerCore.player.setOnCompletionListener(PlayerCore.playerEvent);
-        PlayerCore.player.prepareAsync();
-        PlayerCore.url=url;
-        PlayerTimerTask.start();
-    }
+//
+//    public static void openUrl2(String url) throws IOException {
+//        if(PlayerCore.player==null){
+//            PlayerCore.player=new MediaPlayer();
+//            PlayerCore.player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//        }
+//        PlayerCore.player.reset();
+//        PlayerCore.player.setDataSource(url);
+//        PlayerCore.player.setOnPreparedListener(PlayerCore.playerEvent);
+//        PlayerCore.player.setOnErrorListener(PlayerCore.playerEvent);
+//        PlayerCore.player.setOnBufferingUpdateListener(PlayerCore.playerEvent);
+//        PlayerCore.player.setOnCompletionListener(PlayerCore.playerEvent);
+//        PlayerCore.player.prepareAsync();
+//        PlayerCore.url=url;
+//        PlayerTimerTask.start();
+//    }
 
 
     protected static void destroyPlayer(){
@@ -87,53 +87,53 @@ public class PlayerCore {
     }
 
 
-    private static  void seek2(int msec) {
-        if(PlayerCore.player!=null){
-            PlayerCore.player.seekTo(msec);
-        }
-    }
-    private static void stop2() {
-        if(PlayerCore.player!=null){
-            if(PlayerCore.uiMessenger!=null){
-                Message obtain = Message.obtain();
-                obtain.what=PlayerEumu.HANDLER_DISABLE;
-                PlayerTimerTask.stop();
-                try {
-                    PlayerCore.uiMessenger.send(obtain);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-            PlayerTimerTask.stop();
-            PlayerCore.player.stop();
-            PlayerCore.player.release();
-            PlayerCore.player=null;
-        }
-    }
-    private static  void pause2() {
-        Log.d(TAG,"music pauseing ");
-        if(PlayerCore.player!=null && PlayerCore.player.isPlaying()){
-            PlayerCore.player.pause();
-            PlayerTimerTask.stop();
-        }
-    }
-    private static void play2() {
-        if( PlayerCore.url!=null  && PlayerCore.player!=null && !PlayerCore.player.isPlaying()){
-            PlayerCore.player.start();
-            PlayerTimerTask.start();
-        }
-    }
-    private static void trigger2(){
-        if(PlayerCore.url!=null && PlayerCore.player!=null){
-            if(PlayerCore.player.isPlaying()){
-                PlayerCore.player.pause();
-                PlayerTimerTask.stop();
-            }else{
-                PlayerCore.player.start();
-                PlayerTimerTask.start();
-            }
-        }
-    }
+//    private static  void seek2(int msec) {
+//        if(PlayerCore.player!=null){
+//            PlayerCore.player.seekTo(msec);
+//        }
+//    }
+//    private static void stop2() {
+//        if(PlayerCore.player!=null){
+//            if(PlayerCore.uiMessenger!=null){
+//                Message obtain = Message.obtain();
+//                obtain.what=PlayerEumu.HANDLER_DISABLE;
+//                PlayerTimerTask.stop();
+//                try {
+//                    PlayerCore.uiMessenger.send(obtain);
+//                } catch (RemoteException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            PlayerTimerTask.stop();
+//            PlayerCore.player.stop();
+//            PlayerCore.player.release();
+//            PlayerCore.player=null;
+//        }
+//    }
+//    private static  void pause2() {
+//        Log.d(TAG,"music pauseing ");
+//        if(PlayerCore.player!=null && PlayerCore.player.isPlaying()){
+//            PlayerCore.player.pause();
+//            PlayerTimerTask.stop();
+//        }
+//    }
+//    private static void play2() {
+//        if( PlayerCore.url!=null  && PlayerCore.player!=null && !PlayerCore.player.isPlaying()){
+//            PlayerCore.player.start();
+//            PlayerTimerTask.start();
+//        }
+//    }
+//    private static void trigger2(){
+//        if(PlayerCore.url!=null && PlayerCore.player!=null){
+//            if(PlayerCore.player.isPlaying()){
+//                PlayerCore.player.pause();
+//                PlayerTimerTask.stop();
+//            }else{
+//                PlayerCore.player.start();
+//                PlayerTimerTask.start();
+//            }
+//        }
+//    }
 
 
 
@@ -152,83 +152,83 @@ public class PlayerCore {
             PlayerTimerTask.stop();
         }
     }
-    public static synchronized void openUrl(String url){
-        if(PlayerCore.uiMessenger!=null){
-            Message message=Message.obtain();
-            message.what=PlayerEumu.HANDLE_OPEN_URL;
-            HashMap<String,String> hashMap=new HashMap<>();
-            hashMap.put("url",url);
-            message.obj=hashMap;
-            message.replyTo=PlayerCore.uiMessenger;
-            try {
-                Log.d(TAG,"Player Message"+message.toString());
-                PlayerCore.MusicMessenger.send(message);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    public static void stop(){
-        if(PlayerCore.uiMessenger!=null){
-            Message message=Message.obtain();
-            message.what=PlayerEumu.HANDLE_STOP;
-            message.replyTo=PlayerCore.uiMessenger;
-            try {
-                PlayerCore.MusicMessenger.send(message);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    public static void seek(int msec){
-        if(PlayerCore.uiMessenger!=null){
-            Message message=Message.obtain();
-            message.what=PlayerEumu.HANDLE_SEEK;
-            message.obj=msec;
-            message.replyTo=PlayerCore.uiMessenger;
-            try {
-                PlayerCore.MusicMessenger.send(message);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    public static void play(){
-        if(PlayerCore.uiMessenger!=null){
-            Message message=Message.obtain();
-            message.what=PlayerEumu.HANDLE_PLAY;
-            message.replyTo=PlayerCore.uiMessenger;
-            try {
-                PlayerCore.MusicMessenger.send(message);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    public static void pause(){
-        if(PlayerCore.uiMessenger!=null){
-            Message message=Message.obtain();
-            message.what=PlayerEumu.HANDLE_PAUSE;
-            message.replyTo=PlayerCore.uiMessenger;
-            try {
-                PlayerCore.MusicMessenger.send(message);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    public static void trigger(){
-        if(PlayerCore.uiMessenger!=null){
-            Message message=Message.obtain();
-            message.what=PlayerEumu.HANDLE_TRIGGER;
-            message.replyTo=PlayerCore.uiMessenger;
-            try {
-                PlayerCore.MusicMessenger.send(message);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    public static synchronized void openUrl(String url){
+//        if(PlayerCore.uiMessenger!=null){
+//            Message message=Message.obtain();
+//            message.what=PlayerEumu.HANDLE_OPEN_URL;
+//            HashMap<String,String> hashMap=new HashMap<>();
+//            hashMap.put("url",url);
+//            message.obj=hashMap;
+//            message.replyTo=PlayerCore.uiMessenger;
+//            try {
+//                Log.d(TAG,"Player Message"+message.toString());
+//                PlayerCore.MusicMessenger.send(message);
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+//    public static void stop(){
+//        if(PlayerCore.uiMessenger!=null){
+//            Message message=Message.obtain();
+//            message.what=PlayerEumu.HANDLE_STOP;
+//            message.replyTo=PlayerCore.uiMessenger;
+//            try {
+//                PlayerCore.MusicMessenger.send(message);
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+//    public static void seek(int msec){
+//        if(PlayerCore.uiMessenger!=null){
+//            Message message=Message.obtain();
+//            message.what=PlayerEumu.HANDLE_SEEK;
+//            message.obj=msec;
+//            message.replyTo=PlayerCore.uiMessenger;
+//            try {
+//                PlayerCore.MusicMessenger.send(message);
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+//    public static void play(){
+//        if(PlayerCore.uiMessenger!=null){
+//            Message message=Message.obtain();
+//            message.what=PlayerEumu.HANDLE_PLAY;
+//            message.replyTo=PlayerCore.uiMessenger;
+//            try {
+//                PlayerCore.MusicMessenger.send(message);
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+//    public static void pause(){
+//        if(PlayerCore.uiMessenger!=null){
+//            Message message=Message.obtain();
+//            message.what=PlayerEumu.HANDLE_PAUSE;
+//            message.replyTo=PlayerCore.uiMessenger;
+//            try {
+//                PlayerCore.MusicMessenger.send(message);
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+//    public static void trigger(){
+//        if(PlayerCore.uiMessenger!=null){
+//            Message message=Message.obtain();
+//            message.what=PlayerEumu.HANDLE_TRIGGER;
+//            message.replyTo=PlayerCore.uiMessenger;
+//            try {
+//                PlayerCore.MusicMessenger.send(message);
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
     /** Defines callbacks for service binding, passed to bindService() */
     private static ServiceConnection mConnection = new ServiceConnection() {
 
@@ -265,38 +265,38 @@ public class PlayerCore {
             }else{
                 PlayerCore.uiMessenger=null;
             }
-            switch (msg.what){
-                case PlayerEumu.HANDLE_OPEN_URL:
-                    Map<String, String> obj = (Map<String, String>) msg.obj;
-                    if(obj.get("url")!=null){
-                        try {
-                            Log.d(TAG,"music start play{}"+obj.get("url"));
-                            PlayerCore.openUrl2(obj.get("url"));
-                        } catch (IOException e) {
-                            Log.d(TAG,"music start error{}"+e.getMessage());
-                            e.printStackTrace();
-                        }
-                    }
-                    break;
-                case PlayerEumu.HANDLE_STOP:
-                    PlayerCore.stop2();
-                    break;
-                case PlayerEumu.HANDLE_SEEK:
-                    PlayerCore.seek2((int)msg.obj);
-                    break;
-                case PlayerEumu.HANDLE_PLAY:
-                    PlayerCore.play2();
-                    break;
-                case PlayerEumu.HANDLE_PAUSE:
-                    Log.d(TAG,"music pause");
-                    PlayerCore.pause2();
-                    break;
-                case PlayerEumu.HANDLE_TRIGGER:
-                    PlayerCore.trigger2();
-                    break;
-                default:
-
-            }
+//            switch (msg.what){
+//                case PlayerEumu.HANDLE_OPEN_URL:
+//                    Map<String, String> obj = (Map<String, String>) msg.obj;
+//                    if(obj.get("url")!=null){
+//                        try {
+//                            Log.d(TAG,"music start play{}"+obj.get("url"));
+////                            PlayerCore.openUrl2(obj.get("url"));
+//                        } catch (IOException e) {
+//                            Log.d(TAG,"music start error{}"+e.getMessage());
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    break;
+//                case PlayerEumu.HANDLE_STOP:
+//                    PlayerCore.stop2();
+//                    break;
+//                case PlayerEumu.HANDLE_SEEK:
+//                    PlayerCore.seek2((int)msg.obj);
+//                    break;
+//                case PlayerEumu.HANDLE_PLAY:
+//                    PlayerCore.play2();
+//                    break;
+//                case PlayerEumu.HANDLE_PAUSE:
+//                    Log.d(TAG,"music pause");
+//                    PlayerCore.pause2();
+//                    break;
+//                case PlayerEumu.HANDLE_TRIGGER:
+//                    PlayerCore.trigger2();
+//                    break;
+//                default:
+//
+//            }
             super.handleMessage(msg);
         }
     });

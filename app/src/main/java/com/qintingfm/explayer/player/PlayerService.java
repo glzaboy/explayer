@@ -134,21 +134,29 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.getAction() != null) {
-            switch (Integer.valueOf(intent.getAction())) {
-                case PlayerEumu.HANDLE_PLAY:
-                    mediaControllerCompat.getTransportControls().play();
-                    break;
-                case PlayerEumu.HANDLE_STOP:
-                    mediaControllerCompat.getTransportControls().stop();
-                    break;
-                case PlayerEumu.HANDLE_PAUSE:
+            long aLong = Long.valueOf(intent.getAction());
+            if(aLong==PlaybackStateCompat.ACTION_PLAY){
+                mediaControllerCompat.getTransportControls().play();
+            }
+            if(aLong==PlaybackStateCompat.ACTION_STOP){
+                mediaControllerCompat.getTransportControls().stop();
+            }
+            if(aLong==PlaybackStateCompat.ACTION_PAUSE){
+                mediaControllerCompat.getTransportControls().pause();
+            }
+            if(aLong==PlaybackStateCompat.ACTION_PLAY_FROM_URI){
+                mediaControllerCompat.getTransportControls().playFromUri(intent.getData(), new Bundle());
+            }
+            if(aLong==PlaybackStateCompat.ACTION_SEEK_TO){
+                mediaControllerCompat.getTransportControls().seekTo(Long.valueOf(intent.getData().toString()));
+            }
+            if(aLong==PlaybackStateCompat.ACTION_PLAY_PAUSE){
+                if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PLAYING){
                     mediaControllerCompat.getTransportControls().pause();
-                    break;
-                case PlayerEumu.HANDLE_OPEN_URL:
-                    mediaControllerCompat.getTransportControls().playFromUri(intent.getData(), new Bundle());
-                    break;
-                case PlayerEumu.HANDLE_SEEK:
-                    mediaControllerCompat.getTransportControls().seekTo(Long.valueOf(intent.getData().toString()));
+                }else if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PAUSED){
+                    mediaControllerCompat.getTransportControls().play();
+                }
+//                mediaControllerCompat.getTransportControls().seekTo(Long.valueOf(intent.getData().toString()));
             }
         }
 
@@ -181,18 +189,14 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         PlayerNotification playerNotificatio = new PlayerNotification(this.getApplicationContext(), "Ex Player Core");
         playerNotificatio.getDefault(R.drawable.ic_music_black_24dp, "Explayer", "播放");
 
-        playerNotificatio.addAction(android.R.drawable.ic_media_previous, "", null);
+        playerNotificatio.addAction(android.R.drawable.ic_media_previous, "上一首", PendingIntent.getService(this.getApplicationContext(), 100, new Intent(this.getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)), PendingIntent.FLAG_UPDATE_CURRENT));
 //        playerNotificatio.addAction(android.R.drawable.ic_media_rew,"",null);
 
         ;
-        playerNotificatio.addAction(android.R.drawable.ic_media_play, "播放", PendingIntent.getService(this.getApplicationContext(), 1, new Intent(this.getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlayerEumu.HANDLE_PLAY)), PendingIntent.FLAG_UPDATE_CURRENT));
+        playerNotificatio.addAction(android.R.drawable.ic_media_play, "播放", PendingIntent.getService(this.getApplicationContext(), 1, new Intent(this.getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_PAUSE)), PendingIntent.FLAG_UPDATE_CURRENT));
 
-        Intent intent = new Intent(this.getApplicationContext(), PlayerService.class);
-        intent.setAction(String.valueOf(PlayerEumu.HANDLE_STOP));
-//        intent.setData(Uri.parse(view1.getText().toString()));
 
-        PendingIntent service = PendingIntent.getService(this.getApplicationContext(), 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        playerNotificatio.addAction(android.R.drawable.ic_media_next, "下一首", service);
+        playerNotificatio.addAction(android.R.drawable.ic_media_next, "下一首", PendingIntent.getService(this.getApplicationContext(), 100, new Intent(this.getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT)), PendingIntent.FLAG_UPDATE_CURRENT));
 //        playerNotificatio.addAction(android.R.drawable.ic_media_ff,"",null);
         playerNotificatio.setStyle(new NotificationCompat.MediaStyle().setShowCancelButton(true).setShowActionsInCompactView(0, 1, 2).setMediaSession(mediaSessionCompat.getSessionToken()));
         playerNotificatio.setNubmber(0);
