@@ -48,6 +48,16 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         }
 
         @Override
+        public void onPlayFromMediaId(String mediaId, Bundle extras) {
+            super.onPlayFromMediaId(mediaId, extras);
+        }
+
+        @Override
+        public void onPlayFromSearch(String query, Bundle extras) {
+            super.onPlayFromSearch(query, extras);
+        }
+
+        @Override
         public void onPrepare() {
             super.onPrepare();
         }
@@ -92,6 +102,14 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         @Override
         public void onSeekTo(long pos) {
             super.onSeekTo(pos);
+            switch (mPlaybackStateCompat.getState()) {
+                case PlaybackStateCompat.STATE_PLAYING:
+                    mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_REWINDING, pos, 1.0f).build();
+                    mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
+                    mediaPlayer.seekTo((int)pos/1000);
+                    break;
+                default:
+            }
         }
 
         @Override
@@ -117,6 +135,11 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
             }
 
 
+        }
+
+        @Override
+        public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
+            return super.onMediaButtonEvent(mediaButtonEvent);
         }
     };
 

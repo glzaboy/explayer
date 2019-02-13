@@ -23,8 +23,8 @@ public class PlayerCore {
     private static final String TAG=PlayerCore.class.getName();
     public static boolean mBound = false;
     public static Messenger MusicMessenger;
-    static MediaPlayer player;
-    static PlayerEvent playerEvent;
+//    static MediaPlayer player;
+//    static PlayerEvent playerEvent;
     static String url;
     static Messenger uiMessenger;
     static private boolean isServiceRunning(Context packageContext){
@@ -42,7 +42,7 @@ public class PlayerCore {
         if(!isServiceRunning(packageContext)){
             Intent intent=new Intent(packageContext,PlayerService.class);
             packageContext.startService(intent);
-            PlayerCore.playerEvent=new PlayerEvent();
+//            PlayerCore.playerEvent=new PlayerEvent();
             Log.d(TAG,"启动服务：");
         }else{
             Log.d(TAG,"启动服务：服务已经在运行");
@@ -76,15 +76,15 @@ public class PlayerCore {
 //    }
 
 
-    protected static void destroyPlayer(){
-        if(PlayerCore.player!=null){
-            if(PlayerCore.player.isPlaying()){
-                PlayerCore.player.stop();
-            }
-            PlayerCore.player.release();
-            PlayerCore.player=null;
-        }
-    }
+//    protected static void destroyPlayer(){
+//        if(PlayerCore.player!=null){
+//            if(PlayerCore.player.isPlaying()){
+//                PlayerCore.player.stop();
+//            }
+//            PlayerCore.player.release();
+//            PlayerCore.player=null;
+//        }
+//    }
 
 
 //    private static  void seek2(int msec) {
@@ -143,13 +143,13 @@ public class PlayerCore {
         Intent intent = new Intent(packageContext, PlayerService.class);
         packageContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         PlayerCore.uiMessenger=new Messenger(handler);
-        PlayerTimerTask.start();
+//        PlayerTimerTask.start();
     }
     public static synchronized void detach(Context packageContext){
         if (PlayerCore.uiMessenger!=null) {
             PlayerCore.uiMessenger=null;
             packageContext.unbindService(mConnection);
-            PlayerTimerTask.stop();
+//            PlayerTimerTask.stop();
         }
     }
 //    public static synchronized void openUrl(String url){
