@@ -1,21 +1,29 @@
 package com.qintingfm.explayer.fegment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.widget.AppCompatImageButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
 import com.qintingfm.explayer.R;
-import com.qintingfm.explayer.player.PlayerEumu;
+import com.qintingfm.explayer.player.PlayerCore;
 import com.qintingfm.explayer.player.PlayerService;
 
-public class Player extends Fragment implements View.OnClickListener{
+import java.lang.ref.WeakReference;
 
+public class Player extends Fragment implements View.OnClickListener{
+    private static final String TAG= Player.class.getName();
+
+    private PlayerHandler mPlayerHandler=new PlayerHandler(this);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,6 +37,26 @@ public class Player extends Fragment implements View.OnClickListener{
         inflate.findViewById(R.id.play_pause).setOnClickListener(this);
         inflate.findViewById(R.id.next).setOnClickListener(this);
         inflate.findViewById(R.id.prev).setOnClickListener(this);
+        SeekBar seekBar = (SeekBar)inflate.findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Intent intent=new Intent(Player.this.getActivity(), PlayerService.class);
+                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SEEK_TO));
+                intent.putExtra("seek",seekBar.getProgress());
+                Player.this.getActivity().startService(intent);
+            }
+        });
         return inflate;
     }
 
@@ -47,5 +75,35 @@ public class Player extends Fragment implements View.OnClickListener{
                 break;
         }
         this.getActivity().startService(intent);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        PlayerCore.attach(context.getApplicationContext(),new PlayerHandler(this));
+        mPlayerHandler.sendEmptyMessage(11);
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        PlayerCore.detach(this.getActivity().getApplicationContext());
+    }
+    private static class PlayerHandler extends Handler{
+        WeakReference<Player> playerWeakReference;
+        public PlayerHandler(Player player) {
+            playerWeakReference=new WeakReference<>(player);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Log.d(TAG,"UI test");
+            switch (msg.what) {
+                case PlaybackStateCompat.STATE_NONE:
+                    break;
+            }
+        }
     }
 }

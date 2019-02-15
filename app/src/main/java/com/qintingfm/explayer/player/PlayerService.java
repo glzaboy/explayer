@@ -6,10 +6,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.ResultReceiver;
+import android.os.*;
 import android.support.annotation.RequiresApi;
 import android.support.v4.media.app.NotificationCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -20,6 +17,7 @@ import android.widget.Toast;
 import com.qintingfm.explayer.R;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 
 public class PlayerService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
@@ -29,6 +27,9 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     PlaybackStateCompat mPlaybackStateCompat;
     MediaControllerCompat mediaControllerCompat;
     private MediaPlayer mediaPlayer;
+    PlayerServiceHandle playerServiceHandle;
+    Messenger messenger;
+    Messenger uiMessenger;
     MediaSessionCompat.Callback mediaSessionCompatCallback = new MediaSessionCompat.Callback() {
         @Override
         public void onCommand(String command, Bundle extras, ResultReceiver cb) {
@@ -150,7 +151,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     @Override
     public IBinder onBind(Intent intent) {
         Toast.makeText(getApplicationContext(), "binding", Toast.LENGTH_SHORT).show();
-        return PlayerCore.mMessenger.getBinder();
+        return messenger.getBinder();
     }
 
 
@@ -171,7 +172,8 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
                 mediaControllerCompat.getTransportControls().playFromUri(intent.getData(), new Bundle());
             }
             if(aLong==PlaybackStateCompat.ACTION_SEEK_TO){
-                mediaControllerCompat.getTransportControls().seekTo(Long.valueOf(intent.getData().toString()));
+                int seek = intent.getExtras().getInt("seek");
+                mediaControllerCompat.getTransportControls().seekTo(seek);
             }
             if(aLong==PlaybackStateCompat.ACTION_PLAY_PAUSE){
                 if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PLAYING){
@@ -190,6 +192,8 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     @Override
     public void onCreate() {
         super.onCreate();
+        playerServiceHandle=new PlayerServiceHandle(this);
+        messenger=new Messenger(playerServiceHandle);
         mPlaybackBuilder = new PlaybackStateCompat.Builder();
         mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f).build();
 
@@ -278,5 +282,27 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         mp.start();
         mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f).build();
         mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
+    }
+
+
+    /**
+     * Server Handle
+     */
+    public static class PlayerServiceHandle extends Handler{
+        WeakReference<PlayerService> playerServiceWeakReference;
+
+        public PlayerServiceHandle(PlayerService playerService) {
+            this.playerServiceWeakReference = new WeakReference<>(playerService);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(msg.replyTo!=null){
+                playerServiceWeakReference.get().uiMessenger=msg.replyTo;
+            }else{
+                playerServiceWeakReference.get().uiMessenger=null;
+            }
+        }
     }
 }

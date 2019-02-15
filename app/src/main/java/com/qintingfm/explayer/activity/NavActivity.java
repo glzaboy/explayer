@@ -55,6 +55,10 @@ public class NavActivity extends AppCompatActivity {
         // Hide the status bar.
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
+
+        getSupportActionBar().setTitle("Ex Player");
+        getSupportActionBar().setIcon(R.drawable.ic_music_black_24dp);
+
 //        }
         setContentView(R.layout.activity_nav);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
