@@ -49,13 +49,11 @@ public class MediaStoreCon {
         Intent intent = new Intent(packageContext, MediaService.class);
         packageContext.bindService(intent, MediaStoreCon.mConnection, Context.BIND_AUTO_CREATE);
         MediaStoreCon.uiMessenger=new Messenger(handler);
-//        PlayerTimerTask.start();
     }
     public static synchronized void detach(Context packageContext){
         if (MediaStoreCon.uiMessenger!=null) {
             MediaStoreCon.uiMessenger=null;
             packageContext.unbindService(MediaStoreCon.mConnection);
-//            PlayerTimerTask.stop();
         }
     }
 //    /** Defines callbacks for service binding, passed to bindService() */
@@ -64,7 +62,6 @@ public class MediaStoreCon {
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
-
             Log.d(TAG,"连接服务：");
             MediaStoreCon.MediaStoreMessenger=new Messenger(service);
             Message message= Message.obtain();

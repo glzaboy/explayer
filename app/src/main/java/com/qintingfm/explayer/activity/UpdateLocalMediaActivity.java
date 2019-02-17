@@ -17,27 +17,38 @@ import com.qintingfm.explayer.mediastore.MediaStoreConstant;
 import java.lang.ref.WeakReference;
 
 public class UpdateLocalMediaActivity extends AppCompatActivity {
-    final static String TAG= UpdateLocalMediaActivity.class.getName();
-    WeakReference<Handler> mHandler = new WeakReference<Handler>(new Handler(){
+    final static String TAG = UpdateLocalMediaActivity.class.getName();
+
+    private static class MediaScanfHandler extends Handler {
+        WeakReference<UpdateLocalMediaActivity> mUpdateLocalMediaActivityWeakReference;
+
+        private MediaScanfHandler(UpdateLocalMediaActivity updateLocalMediaActivity) {
+            this.mUpdateLocalMediaActivityWeakReference = new WeakReference<>(updateLocalMediaActivity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            super.handleMessage(msg);
+            switch (msg.what) {
                 case MediaStoreConstant.HANDLE_READY:
-                    Log.d(TAG,"Media store SERVICE READY ");
+                    Log.d(TAG, "Media store SERVICE READY ");
                     MediaStoreCon.scanfLocalMedia();
                     break;
                 case MediaStoreConstant.HANDLE_SCAN_FINISHED:
-                    Intent intent=new Intent(UpdateLocalMediaActivity.this,NavActivity.class);
-                    intent.setData(getIntent().getData());
-                    intent.putExtra("play_source","UpdateLocalMedia");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    UpdateLocalMediaActivity.this.finish();
+                    UpdateLocalMediaActivity updateLocalMediaActivity = mUpdateLocalMediaActivityWeakReference.get();
+                    if (updateLocalMediaActivity != null) {
+                        Intent intent = new Intent(updateLocalMediaActivity, NavActivity.class);
+                        intent.setData(updateLocalMediaActivity.getIntent().getData());
+                        intent.putExtra("play_source", "UpdateLocalMedia");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        updateLocalMediaActivity.startActivity(intent);
+                        updateLocalMediaActivity.finish();
+                    }
                     break;
             }
-            super.handleMessage(msg);
         }
-    });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +69,7 @@ public class UpdateLocalMediaActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        MediaStoreCon.attach(this,mHandler.get());
+        MediaStoreCon.attach(this, new MediaScanfHandler(this));
     }
 
     @Override

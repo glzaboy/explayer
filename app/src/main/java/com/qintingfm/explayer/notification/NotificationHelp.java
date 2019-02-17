@@ -18,6 +18,7 @@ public abstract class NotificationHelp {
     private String notifyTag ;
     private Context context;
     private NotificationCompat.Builder builder=null;
+    private NotificationChannel notifyChannel;
 
     public NotificationCompat.Builder getBuilder() {
         if(builder==null){
@@ -50,19 +51,20 @@ public abstract class NotificationHelp {
         this.context = context;
     }
     public NotificationHelp getDefault(int rResourceIcon, String title, String content){
-        NotificationChannel notifyChannel = createNotifyChannel();
-        if (notifyChannel != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getManager().createNotificationChannel(notifyChannel);
+        initNotifyChannel();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder = new NotificationCompat.Builder(getContext(), notifyChannel.getId());
         } else {
             builder = new NotificationCompat.Builder(getContext());
         }
-        builder.setDefaults(Notification.DEFAULT_ALL);
+        builder.setDefaults(NotificationCompat.DEFAULT_LIGHTS);
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         builder.setSmallIcon(rResourceIcon);
         builder.setContentTitle(title);
         builder.setContentText(content);
         builder.setTicker(content);
         builder.setNumber(1);
+
         builder.setWhen(System.currentTimeMillis());
         builder.setAutoCancel(true);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
@@ -73,6 +75,14 @@ public abstract class NotificationHelp {
     }
     public NotificationHelp addAction(int icon, java.lang.CharSequence title, android.app.PendingIntent intent){
         getBuilder().addAction(icon,title,intent);
+        return this;
+    }
+    public NotificationHelp setOngoing(boolean ongoing){
+        getBuilder().setOngoing(ongoing);
+        return this;
+    }
+    public NotificationHelp addAction(NotificationCompat.Action action){
+        getBuilder().addAction(action);
         return this;
     }
     public NotificationHelp setOnClick(android.app.PendingIntent intent){
@@ -150,11 +160,13 @@ public abstract class NotificationHelp {
             getManager().cancel(getNotifyTag().hashCode());
         }
     }
-
-    private NotificationChannel createNotifyChannel() {
+    private void initNotifyChannel(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return new NotificationChannel(String.valueOf(getNotifyTag().hashCode()), getNotifyTag(), NotificationManager.IMPORTANCE_DEFAULT);
+            if(notifyChannel!=null){
+                return;
+            }
+            notifyChannel=new NotificationChannel(String.valueOf(getNotifyTag().hashCode()), getNotifyTag(), NotificationManager.IMPORTANCE_DEFAULT);
+            getManager().createNotificationChannel(notifyChannel);
         }
-        return null;
     }
 }

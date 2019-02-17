@@ -17,7 +17,8 @@ import java.util.List;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
     private static final String TAG=RecyclerAdapter.class.getName();
     private List<LocalMedia> data;
-    private OnItemClickListener mOnItemClickListener;
+    private View.OnClickListener mOnItemClickListener;
+    private View.OnClickListener mOnClickListener;
     public RecyclerAdapter(List<LocalMedia> data) {
         this.data=data;
     }
@@ -26,9 +27,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
         return data;
     }
 
-    public void setData(List<LocalMedia> data) {
-        this.data = data;
-    }
     public void clearData() {
         this.data = new ArrayList<>();
     }
@@ -46,17 +44,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
 
     @Override
     public void onBindViewHolder(@NonNull Vh vh, int i) {
-        vh.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG,"on click"+getItemCount());
-                if(mOnItemClickListener!=null){
-                    View viewById = v.findViewById(R.id.data);
-                    mOnItemClickListener.onItemClick(viewById);
-                }
-
-            }
-        });
+        if(mOnClickListener!=null){
+            vh.itemView.setOnClickListener(mOnClickListener);
+        }
+        if(mOnItemClickListener!=null){
+            vh.title.setOnClickListener(mOnItemClickListener);
+            vh.artist.setOnClickListener(mOnItemClickListener);
+            vh.displayName.setOnClickListener(mOnItemClickListener);
+            vh.data.setOnClickListener(mOnItemClickListener);
+            vh.duration.setOnClickListener(mOnItemClickListener);
+        }
         vh.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -64,50 +61,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
                 return false;
             }
         });
-//        vh.itemView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-//                return this.onTouch(v,event);
-//            }
-//        });
-//        int itemViewType = getItemViewType(i);
+
         vh.title.setText(data.get(i).getTitle());
-        vh.title.setTag(i);
-//        vh.title.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(mOnItemClickListener!=null){
-////                    int tag = (int)v.getTag();
-//                    mOnItemClickListener.onItemClick(v);
-//                }
-//            }
-//        });
+
         vh.artist.setText(data.get(i).getArtist());
-        vh.artist.setTag(i);
         vh.displayName.setText(data.get(i).getDisplayName());
-        vh.displayName.setTag(i);
-//        vh.displayName.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(mOnItemClickListener!=null){
-////                    int tag = (int)v.getTag();
-//                    mOnItemClickListener.onItemClick(v);
-//                }
-//            }
-//        });
         vh.data.setText(data.get(i).getData());
-        vh.data.setTag(i);
         vh.duration.setText(String.valueOf(data.get(i).getDuration()));
-        vh.duration.setTag(i);
+        vh.id.setText(String.valueOf(data.get(i).getId()));
 
 
-//        vh.title.setOnClickListener(new View.OnClickListener(View v){
-//            @Override
-//            public void onClick(TextView v) {
-////                Toast.makeText(RecyclerAdapter.this,v.getText(),Toast.LENGTH_LONG).show();
-//            }
-//        });
     }
 
     @Override
@@ -121,6 +84,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
         private TextView displayName;
         private TextView data;
         private TextView duration;
+        private TextView id;
         public Vh(@NonNull View itemView) {
             super(itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -134,15 +98,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
             displayName = itemView.findViewById(R.id.displayName);
             data = itemView.findViewById(R.id.data);
             duration = itemView.findViewById(R.id.duration);
+            id = itemView.findViewById(R.id.id);
         }
     }
 
-    protected void setmOnItemClickListener(OnItemClickListener mOnItemClickListener) {
-        this.mOnItemClickListener = mOnItemClickListener;
+    protected void setItemOnClickListener(View.OnClickListener mOnClickListener) {
+        this.mOnItemClickListener = mOnClickListener;
     }
-
-    public interface OnItemClickListener {
-        void onItemClick(View view);
-
+    protected void setOnClickListener(View.OnClickListener mOnClickListener) {
+        this.mOnClickListener = mOnClickListener;
     }
 }

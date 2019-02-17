@@ -22,7 +22,6 @@ import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
 import com.qintingfm.explayer.entity.LocalMedia;
 import com.qintingfm.explayer.player.PlayerCore;
-import com.qintingfm.explayer.player.PlayerEumu;
 import com.qintingfm.explayer.player.PlayerService;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -32,7 +31,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,31 +46,31 @@ public class PlayList extends Fragment {
         viewById.setItemAnimator(new DefaultItemAnimator());
         viewById.addItemDecoration(new DividerItemDecoration(this.getContext(),0));
         final RecyclerAdapter recyclerAdpater = new RecyclerAdapter(new ArrayList<LocalMedia>());
-        recyclerAdpater.setmOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
+        recyclerAdpater.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onItemClick(View view) {
-                TextView view1 = (TextView) view;
-                switch (view1.getId()){
-                    case R.id.title:
-                        Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();
-                        break;
-                    case R.id.artist:
-                        Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();
-                        break;
-                    case R.id.displayName:
-                        Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();
-                        break;
-                    case R.id.data:
-                        PlayerCore.startService(PlayList.this.getActivity().getApplicationContext());
-                        Intent intent=new Intent(PlayList.this.getActivity(), PlayerService.class);
-                        intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_FROM_URI));
-                        intent.setData(Uri.parse(view1.getText().toString()));
-                        PlayList.this.getActivity().startService(intent);
-                        Toast.makeText(PlayList.this.getActivity(),view1.getText(),Toast.LENGTH_LONG).show();
-                        break;
-                }
+            public void onClick(View v) {
+                PlayerCore.startService(PlayList.this.getActivity().getApplicationContext());
+                Intent intent=new Intent(PlayList.this.getActivity(), PlayerService.class);
+                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_FROM_URI));
+                intent.setData(Uri.parse(((TextView)v.findViewById(R.id.data)).getText().toString()));
+                intent.putExtra("title",((TextView)v.findViewById(R.id.title)).getText().toString());
+                intent.putExtra("artist",((TextView)v.findViewById(R.id.artist)).getText().toString());
+                intent.putExtra("position",Integer.valueOf(((TextView)v.findViewById(R.id.id)).getText().toString()));
+
+                PlayList.this.getActivity().startService(intent);
+                Toast.makeText(PlayList.this.getActivity(),((TextView)v.findViewById(R.id.data)).getText(),Toast.LENGTH_LONG).show();
             }
         });
+//        recyclerAdpater.setItemOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                TextView view1 = (TextView) v;
+//                switch (view1.getId()){
+//                    case R.id.data:
+//                        break;
+//                }
+//            }
+//        });
         viewById.setAdapter(recyclerAdpater );
         viewById.setLayoutManager(linearLayoutManager);
         final MediaStoreDatabase media_store_database = Room.databaseBuilder(this.getContext().getApplicationContext(), MediaStoreDatabase.class, "Media Store Database").build();
@@ -102,7 +100,6 @@ public class PlayList extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-
                     }
 
                     @Override

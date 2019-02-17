@@ -1,6 +1,5 @@
 package com.qintingfm.explayer.fegment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,13 +15,14 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.player.PlayerCore;
+import com.qintingfm.explayer.player.PlayerEvent;
 import com.qintingfm.explayer.player.PlayerService;
 
 import java.lang.ref.WeakReference;
 
 public class Player extends Fragment implements View.OnClickListener{
     private static final String TAG= Player.class.getName();
-
+    SeekBar seekBar;
     private PlayerHandler mPlayerHandler=new PlayerHandler(this);
 
     @Override
@@ -37,7 +37,7 @@ public class Player extends Fragment implements View.OnClickListener{
         inflate.findViewById(R.id.play_pause).setOnClickListener(this);
         inflate.findViewById(R.id.next).setOnClickListener(this);
         inflate.findViewById(R.id.prev).setOnClickListener(this);
-        SeekBar seekBar = (SeekBar)inflate.findViewById(R.id.seekBar);
+        seekBar = (SeekBar)inflate.findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -54,7 +54,10 @@ public class Player extends Fragment implements View.OnClickListener{
                 Intent intent=new Intent(Player.this.getActivity(), PlayerService.class);
                 intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SEEK_TO));
                 intent.putExtra("seek",seekBar.getProgress());
-                Player.this.getActivity().startService(intent);
+                if(Player.this.getActivity()!=null){
+                    Player.this.getActivity().startService(intent);
+                }
+
             }
         });
         return inflate;
@@ -78,16 +81,14 @@ public class Player extends Fragment implements View.OnClickListener{
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        PlayerCore.attach(context.getApplicationContext(),new PlayerHandler(this));
-        mPlayerHandler.sendEmptyMessage(11);
-
+    public void onStart() {
+        super.onStart();
+        PlayerCore.attach(this.getActivity().getApplicationContext(),new PlayerHandler(this));
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onStop() {
+        super.onStop();
         PlayerCore.detach(this.getActivity().getApplicationContext());
     }
     private static class PlayerHandler extends Handler{
@@ -101,7 +102,15 @@ public class Player extends Fragment implements View.OnClickListener{
             super.handleMessage(msg);
             Log.d(TAG,"UI test");
             switch (msg.what) {
-                case PlaybackStateCompat.STATE_NONE:
+                case PlayerEvent.PLAYER_UPDATE_SEEK_BAR:
+
+                    Player player = playerWeakReference.get();
+
+                    if(player!=null){
+                        player.seekBar.setEnabled(true);
+                        player.seekBar.setMax(msg.arg1);
+                        player.seekBar.setProgress(msg.arg2);
+                    }
                     break;
             }
         }

@@ -16,7 +16,6 @@ public class PlayerCore {
     public static boolean mBound = false;
     public static Messenger MusicMessenger;
 //    static PlayerEvent playerEvent;
-//    static String url;
     static Messenger uiMessenger;
     static private boolean isServiceRunning(Context packageContext){
         ActivityManager systemService = (ActivityManager)packageContext.getSystemService(Context.ACTIVITY_SERVICE);
@@ -75,9 +74,11 @@ public class PlayerCore {
             Log.d(TAG,"Player SERVICE READY ");
             try {
                 PlayerCore.MusicMessenger.send(message);
-                Message message2=Message.obtain();
-                message2.what= PlaybackStateCompat.STATE_NONE;
-                PlayerCore.uiMessenger.send(message2);
+                if(PlayerCore.uiMessenger!=null){
+                    Message message2=Message.obtain();
+                    message2.what= PlaybackStateCompat.STATE_NONE;
+                    PlayerCore.uiMessenger.send(message2);
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

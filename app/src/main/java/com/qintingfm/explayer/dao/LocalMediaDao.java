@@ -21,4 +21,12 @@ public interface LocalMediaDao {
     LocalMedia findById(int id);
     @Query("SELECT * FROM LocalMedia")
     List<LocalMedia> findAll();
+
+    @Query("SELECT * FROM LocalMedia where id>:currentId limit 1")
+    LocalMedia findNext(int currentId);
+
+    @Query("SELECT * FROM LocalMedia where id<:currentId limit 1")
+    LocalMedia findPrev(int currentId);
+    @Query("SELECT * FROM LocalMedia ORDER BY RANDOM() limit 1 ")
+    LocalMedia findRand();
 }

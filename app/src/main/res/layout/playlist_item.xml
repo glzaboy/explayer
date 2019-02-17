@@ -8,34 +8,41 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:baselineAligned="false"
-            android:text="12345666" />
+            android:text="" />
 
     <TextView
             android:id="@+id/artist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="133323232" />
+            android:text="" />
 
     <TextView
             android:id="@+id/displayName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="133323232" />
+            android:text="" />
 
     <TextView
             android:id="@+id/data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="133323232"
-            android:visibility="invisible" />
+            android:text=""
+            android:visibility="gone"/>
     <TextView
             android:id="@+id/duration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="133323232"
-            android:visibility="invisible" />
+            android:text=""
+            android:visibility="gone"/>
+    <TextView
+            android:id="@+id/id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:text="" android:visibility="gone"/>
 </LinearLayout>
