@@ -15,6 +15,7 @@ public class PlayerCore {
     private static final String TAG=PlayerCore.class.getName();
     private static Messenger MusicMessenger;
     private static Messenger uiMessenger;
+    boolean mBound = false;
     private static  boolean isServiceRunning(Context packageContext){
         ActivityManager systemService = (ActivityManager)packageContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices = systemService.getRunningServices(50);
@@ -64,14 +65,14 @@ public class PlayerCore {
                                        IBinder service) {
             PlayerCore.MusicMessenger = new Messenger(service);
             Message message=Message.obtain();
-            message.what=PlaybackStateCompat.STATE_NONE;
+            message.what=PlayerEvent.PLAYER_UI_ATTACH;
             message.replyTo=PlayerCore.uiMessenger;
             Log.d(TAG,"Player SERVICE READY ");
             try {
                 PlayerCore.MusicMessenger.send(message);
                 if(PlayerCore.uiMessenger!=null){
                     Message message2=Message.obtain();
-                    message2.what= PlaybackStateCompat.STATE_NONE;
+                    message2.what= PlayerEvent.PLAYER_UI_ATTACH;
                     PlayerCore.uiMessenger.send(message2);
                 }
             } catch (RemoteException e) {

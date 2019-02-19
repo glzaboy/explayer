@@ -6,15 +6,18 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SeekBar;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.fragment.HomeFragment;
 import com.qintingfm.explayer.fragment.PlayList;
 import com.qintingfm.explayer.fragment.Player;
+import com.qintingfm.explayer.player.PlayerService;
 
-public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener{
+public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, Player.OnFragmentInteractionListener {
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -83,8 +86,6 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
         } else {
             navigation.setSelectedItemId(R.id.navigation_home);
         }
-
-
     }
 
     @Override
@@ -99,11 +100,48 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
 
     @Override
     public void onFragmentInteraction(View v) {
-        switch (v.getId()){
+        Intent playerServiceIntent = new Intent(this, PlayerService.class);
+        Intent updateLocalMediaIntent = new Intent(this, UpdateLocalMediaActivity.class);
+        switch (v.getId()) {
             case R.id.update_local_media:
-                Intent intent=new Intent(this, UpdateLocalMediaActivity.class);
-                this.startActivity(intent);
+                this.startActivity(updateLocalMediaIntent);
+                break;
+            case R.id.play_pause:
+                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_PAUSE));
+                startService(playerServiceIntent);
+                break;
+            case R.id.prev:
+                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
+                startService(playerServiceIntent);
+                break;
+            case R.id.next:
+                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
+                startService(playerServiceIntent);
                 break;
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        switch (seekBar.getId()) {
+            case R.id.seekBar:
+                Intent intent = new Intent(this, PlayerService.class);
+                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SEEK_TO));
+                intent.putExtra("seek", seekBar.getProgress());
+                startService(intent);
+                break;
+            default:
+        }
+
     }
 }

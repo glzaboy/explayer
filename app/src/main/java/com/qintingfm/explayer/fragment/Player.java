@@ -1,13 +1,12 @@
 package com.qintingfm.explayer.fragment;
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +15,12 @@ import android.widget.SeekBar;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.player.PlayerCore;
 import com.qintingfm.explayer.player.PlayerEvent;
-import com.qintingfm.explayer.player.PlayerService;
 
 import java.lang.ref.WeakReference;
 
-public class Player extends Fragment implements View.OnClickListener{
+public class Player extends Fragment implements View.OnClickListener,SeekBar.OnSeekBarChangeListener{
     private static final String TAG= Player.class.getName();
+    private Player.OnFragmentInteractionListener mListener;
     SeekBar seekBar;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,47 +35,14 @@ public class Player extends Fragment implements View.OnClickListener{
         inflate.findViewById(R.id.next).setOnClickListener(this);
         inflate.findViewById(R.id.prev).setOnClickListener(this);
         seekBar = inflate.findViewById(R.id.seekBar);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Intent intent=new Intent(getActivity(), PlayerService.class);
-                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SEEK_TO));
-                intent.putExtra("seek",seekBar.getProgress());
-                if(getActivity()!=null){
-                    getActivity().startService(intent);
-                }
-
-            }
-        });
+        seekBar.setOnSeekBarChangeListener(this);
         return inflate;
     }
 
     @Override
     public void onClick(View v) {
-        Intent intent=new Intent(getActivity(), PlayerService.class);
-        switch (v.getId()){
-            case R.id.play_pause:
-                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_PAUSE));
-                break;
-            case R.id.prev:
-                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
-                break;
-            case R.id.next:
-                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
-                break;
-        }
-        if(getActivity()!=null){
-            getActivity().startService(intent);
+        if(mListener!=null){
+            mListener.onFragmentInteraction(v);
         }
     }
 
@@ -112,7 +78,56 @@ public class Player extends Fragment implements View.OnClickListener{
                         player.seekBar.setProgress(msg.arg2);
                     }
                     break;
+                case PlayerEvent.PLAYER_UI_DETACH:
+                    break;
             }
         }
+    }
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(View v);
+        void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser);
+        void onStartTrackingTouch(SeekBar seekBar);
+        void onStopTrackingTouch(SeekBar seekBar);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Player.OnFragmentInteractionListener) {
+            mListener = (Player.OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        mListener.onProgressChanged(seekBar,progress,fromUser);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        mListener.onStartTrackingTouch(seekBar);
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        mListener.onStopTrackingTouch(seekBar);
     }
 }

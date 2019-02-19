@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 
-public class PlayerService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener,MediaPlayer.OnSeekCompleteListener{
+public class PlayerService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener {
     static final String TAG = PlayerService.class.getName();
     MediaSessionCompat mediaSessionCompat;
     PlaybackStateCompat.Builder mPlaybackBuilder;
@@ -30,12 +30,11 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     PlayerServiceHandle playerServiceHandle;
     Messenger messenger;
     Messenger uiMessenger;
-    Bundle bundle=new Bundle();
-    PlayerNotification playerNotification =null;
-    MediaStoreDatabase media_store_database;
+    Bundle bundle = new Bundle();
+    PlayerNotification playerNotification = null;
+    MediaStoreDatabase mediaStoreDatabase;
     LocalMediaDao localMediaDao;
     protected PlayerSeekTask playerSeekTask;
-    boolean mBind=false;
     MediaSessionCompat.Callback mediaSessionCompatCallback = new MediaSessionCompat.Callback() {
         @Override
         public void onCommand(String command, Bundle extras, ResultReceiver cb) {
@@ -44,8 +43,8 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 
         @Override
         public void onPlayFromUri(Uri uri, Bundle extras) {
-            if(extras.getString("title") ==null){
-                extras.putString("title","Ex player No title");
+            if (extras.getString("title") == null) {
+                extras.putString("title", "Ex player No title");
             }
             mediaPlayer.reset();
             try {
@@ -54,28 +53,28 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bundle=extras;
+            bundle = extras;
             super.onPlayFromUri(uri, extras);
         }
 
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
-            if(extras.getString("title") ==null){
-                extras.putString("title","No title");
+            if (extras.getString("title") == null) {
+                extras.putString("title", "No title");
             }
-            bundle=extras;
+            bundle = extras;
             super.onPlayFromMediaId(mediaId, extras);
         }
 
         @Override
         public void onPlayFromSearch(String query, Bundle extras) {
-            if(extras.getString("title") ==null){
-                extras.putString("title","Ex player query");
+            if (extras.getString("title") == null) {
+                extras.putString("title", "Ex player query");
             }
-            if(extras.getString("artist") ==null){
-                extras.putString("artist",null);
+            if (extras.getString("artist") == null) {
+                extras.putString("artist", null);
             }
-            bundle=extras;
+            bundle = extras;
             super.onPlayFromSearch(query, extras);
         }
 
@@ -93,10 +92,6 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
                     mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
                     mediaPlayer.start();
                     playerNotification.updateNotify();
-                    if(playerSeekTask==null){
-                        playerSeekTask=new PlayerSeekTask(PlayerService.this);
-                        playerSeekTask.start();
-                    }
                     break;
                 default:
             }
@@ -111,10 +106,6 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
                     mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
                     mediaPlayer.pause();
                     playerNotification.updateNotify();
-                    if(playerSeekTask!=null){
-                        playerSeekTask.cancel();
-                        playerSeekTask=null;
-                    }
                     break;
                 default:
             }
@@ -124,12 +115,12 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         public void onSkipToNext() {
             super.onSkipToNext();
             LocalMedia position = localMediaDao.findNext(bundle.getInt("position"));
-            if(position!=null){
-                Bundle extras=new Bundle();
-                extras.putString("title",position.getTitle());
-                extras.putString("artist",position.getArtist());
-                extras.putInt("position",position.getId());
-                this.onPlayFromUri(Uri.parse(position.getData()),extras);
+            if (position != null) {
+                Bundle extras = new Bundle();
+                extras.putString("title", position.getTitle());
+                extras.putString("artist", position.getArtist());
+                extras.putInt("position", position.getId());
+                this.onPlayFromUri(Uri.parse(position.getData()), extras);
             }
         }
 
@@ -137,12 +128,12 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         public void onSkipToPrevious() {
             super.onSkipToPrevious();
             LocalMedia position = localMediaDao.findPrev(bundle.getInt("position"));
-            if(position!=null){
-                Bundle extras=new Bundle();
-                extras.putString("title",position.getTitle());
-                extras.putString("artist",position.getArtist());
-                extras.putInt("position",position.getId());
-                this.onPlayFromUri(Uri.parse(position.getData()),extras);
+            if (position != null) {
+                Bundle extras = new Bundle();
+                extras.putString("title", position.getTitle());
+                extras.putString("artist", position.getArtist());
+                extras.putInt("position", position.getId());
+                this.onPlayFromUri(Uri.parse(position.getData()), extras);
             }
 
 
@@ -153,9 +144,9 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
             super.onSeekTo(pos);
             switch (mPlaybackStateCompat.getState()) {
                 case PlaybackStateCompat.STATE_PLAYING:
-                    mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_REWINDING, pos,1.0f).build();
+                    mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_REWINDING, pos, 1.0f).build();
                     mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-                    mediaPlayer.seekTo((int)pos);
+                    mediaPlayer.seekTo((int) pos);
                     break;
                 default:
             }
@@ -200,36 +191,36 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 
     @Override
     public IBinder onBind(Intent intent) {
-        mBind=true;
-        if(PlaybackStateCompat.STATE_BUFFERING==mPlaybackStateCompat.getState() || PlaybackStateCompat.STATE_PLAYING ==mPlaybackStateCompat.getState()){
-            if(playerSeekTask==null){
-                playerSeekTask=new PlayerSeekTask(this);
+        if (PlaybackStateCompat.STATE_BUFFERING == mPlaybackStateCompat.getState() || PlaybackStateCompat.STATE_PLAYING == mPlaybackStateCompat.getState()) {
+            if (playerSeekTask == null) {
+                playerSeekTask = new PlayerSeekTask(this);
                 playerSeekTask.start();
             }
         }
+        Log.d(TAG,"onBind"+intent.toString());
         return messenger.getBinder();
     }
 
     @Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
-        mBind=true;
-        if(PlaybackStateCompat.STATE_BUFFERING==mPlaybackStateCompat.getState() || PlaybackStateCompat.STATE_PLAYING ==mPlaybackStateCompat.getState()){
-            if(playerSeekTask==null){
-                playerSeekTask=new PlayerSeekTask(this);
+        if (PlaybackStateCompat.STATE_BUFFERING == mPlaybackStateCompat.getState() || PlaybackStateCompat.STATE_PLAYING == mPlaybackStateCompat.getState()) {
+            if (playerSeekTask == null) {
+                playerSeekTask = new PlayerSeekTask(this);
                 playerSeekTask.start();
             }
         }
+        Log.d(TAG,"onRebind"+intent.toString());
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        if(playerSeekTask!=null){
-            playerSeekTask.cancel();
-            playerSeekTask=null;
+        if (playerSeekTask != null) {
+            playerSeekTask.stop();
+            playerSeekTask = null;
         }
-        mBind=false;
         super.onUnbind(intent);
+        Log.d(TAG,"onUnbind"+intent.toString());
         //super.onUnbind默认返回false,注意返回false后将在随后的流程中不再调用OnBind ,OnReBind和OnUnbind
         return true;
     }
@@ -238,34 +229,34 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.getAction() != null) {
             long aLong = Long.valueOf(intent.getAction());
-            if(aLong==PlaybackStateCompat.ACTION_PLAY){
+            if (aLong == PlaybackStateCompat.ACTION_PLAY) {
                 mediaControllerCompat.getTransportControls().play();
             }
-            if(aLong==PlaybackStateCompat.ACTION_STOP){
+            if (aLong == PlaybackStateCompat.ACTION_STOP) {
                 mediaControllerCompat.getTransportControls().stop();
             }
-            if(aLong==PlaybackStateCompat.ACTION_PAUSE){
+            if (aLong == PlaybackStateCompat.ACTION_PAUSE) {
                 mediaControllerCompat.getTransportControls().pause();
             }
-            if(aLong==PlaybackStateCompat.ACTION_PLAY_FROM_URI){
+            if (aLong == PlaybackStateCompat.ACTION_PLAY_FROM_URI) {
                 Bundle bundle = new Bundle();
-                bundle.putString("title",intent.getExtras().getString("title"));
-                bundle.putString("artist",intent.getExtras().getString("artist"));
-                bundle.putInt("position",intent.getExtras().getInt("position"));
+                bundle.putString("title", intent.getExtras().getString("title"));
+                bundle.putString("artist", intent.getExtras().getString("artist"));
+                bundle.putInt("position", intent.getExtras().getInt("position"));
                 mediaControllerCompat.getTransportControls().playFromUri(intent.getData(), bundle);
             }
-            if(aLong==PlaybackStateCompat.ACTION_SEEK_TO){
+            if (aLong == PlaybackStateCompat.ACTION_SEEK_TO) {
                 int seek = intent.getExtras().getInt("seek");
                 mediaControllerCompat.getTransportControls().seekTo(seek);
             }
-            if(aLong==PlaybackStateCompat.ACTION_PLAY_PAUSE){
-                if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PLAYING){
+            if (aLong == PlaybackStateCompat.ACTION_PLAY_PAUSE) {
+                if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
                     mediaControllerCompat.getTransportControls().pause();
-                }else if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PAUSED){
+                } else if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
                     mediaControllerCompat.getTransportControls().play();
                 }
             }
-            if(aLong==PlaybackStateCompat.ACTION_SKIP_TO_NEXT){
+            if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_NEXT) {
                 mediaControllerCompat.getTransportControls().skipToNext();
 //                if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PLAYING){
 //                    mediaControllerCompat.getTransportControls().skipToNext();
@@ -273,7 +264,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 //                    mediaControllerCompat.getTransportControls().skipToNext();
 //                }
             }
-            if(aLong==PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS){
+            if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) {
                 mediaControllerCompat.getTransportControls().skipToPrevious();
 //                if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PLAYING){
 //                    mediaControllerCompat.getTransportControls().skipToPrevious();
@@ -290,8 +281,8 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     @Override
     public void onCreate() {
         super.onCreate();
-        playerServiceHandle=new PlayerServiceHandle(this);
-        messenger=new Messenger(playerServiceHandle);
+        playerServiceHandle = new PlayerServiceHandle(this);
+        messenger = new Messenger(playerServiceHandle);
         mPlaybackBuilder = new PlaybackStateCompat.Builder();
         mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f).build();
 
@@ -315,8 +306,8 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         playerNotification = new PlayerNotification(this.getApplicationContext(), "Ex Player Core");
         playerNotification.setPlayerServiceWeakReference(this);
         playerNotification.updateNotify();
-        media_store_database = Room.databaseBuilder(this.getApplicationContext(), MediaStoreDatabase.class, "Media Store Database").allowMainThreadQueries().build();
-        localMediaDao = media_store_database.getLocalMediaDao();
+        mediaStoreDatabase = Room.databaseBuilder(this.getApplicationContext(), MediaStoreDatabase.class, "Media Store Database").allowMainThreadQueries().build();
+        localMediaDao = mediaStoreDatabase.getLocalMediaDao();
         startForeground(100, playerNotification.getBuilder().build());
         Log.d(TAG, "PlayerService onCreate");
     }
@@ -327,7 +318,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         super.onDestroy();
         stopForeground(true);
         Log.d(TAG, "PlayerService onDestroy");
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
 //
 //            try {
 //                mediaPlayer.releaseDrm();
@@ -335,19 +326,19 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 //                e.printStackTrace();
 //            }
             mediaPlayer.release();
-            mediaPlayer=null;
+            mediaPlayer = null;
         }
 //        if(mediaControllerCompat!=null){
 //            mediaControllerCompat.setC(mediaSessionCompatCallback);
 //        }
-        if(mediaSessionCompat!=null){
+        if (mediaSessionCompat != null) {
             mediaSessionCompat.release();
         }
 
-        media_store_database.close();
-        if(playerSeekTask!=null){
-            playerSeekTask.cancel();
-            playerSeekTask=null;
+        mediaStoreDatabase.close();
+        if (playerSeekTask != null) {
+            playerSeekTask.stop();
+            playerSeekTask = null;
         }
 
 
@@ -357,16 +348,12 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         Log.d(TAG, "Music Buffering %" + percent);
-        mPlaybackBuilder.setState(PlaybackStateCompat.STATE_BUFFERING,mediaPlayer.getCurrentPosition(),1.0f);
-        if(playerSeekTask==null){
-            playerSeekTask=new PlayerSeekTask(this);
-            playerSeekTask.start();
-        }
+        mPlaybackBuilder.setState(PlaybackStateCompat.STATE_BUFFERING, mediaPlayer.getCurrentPosition(), 1.0f);
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        mPlaybackStateCompat=mPlaybackBuilder.setState(PlaybackStateCompat.STATE_STOPPED,mp.getCurrentPosition(),1.0f).build();
+        mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_STOPPED, mp.getCurrentPosition(), 1.0f).build();
         mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
         mediaControllerCompat.getTransportControls().skipToNext();
     }
@@ -384,10 +371,6 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mp.getCurrentPosition(), 1.0f).build();
         mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
         playerNotification.updateNotify();
-        if(playerSeekTask==null){
-            playerSeekTask=new PlayerSeekTask(this);
-            playerSeekTask.start();
-        }
     }
 
     @Override
@@ -396,12 +379,20 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mp.getCurrentPosition(), 1.0f).build();
         mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
         playerNotification.updateNotify();
+        if (playerSeekTask!=null) {
+            playerSeekTask.stop();
+            playerSeekTask=null;
+        }
+        if (playerSeekTask == null) {
+            playerSeekTask = new PlayerSeekTask(this);
+            playerSeekTask.start();
+        }
     }
 
     /**
      * Server Handle
      */
-    public static class PlayerServiceHandle extends Handler{
+    public static class PlayerServiceHandle extends Handler {
         WeakReference<PlayerService> playerServiceWeakReference;
 
         public PlayerServiceHandle(PlayerService playerService) {
@@ -411,15 +402,16 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(msg.replyTo!=null){
-                playerServiceWeakReference.get().uiMessenger=msg.replyTo;
-            }else{
-                playerServiceWeakReference.get().uiMessenger=null;
+            if (msg.replyTo != null) {
+                playerServiceWeakReference.get().uiMessenger = msg.replyTo;
+            } else {
+                playerServiceWeakReference.get().uiMessenger = null;
             }
         }
     }
+
     @PlaybackStateCompat.Actions
-    private long getAvailableActions() {
+    public long getAvailableActions() {
         long actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
                 | PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
                 | PlaybackStateCompat.ACTION_PLAY_FROM_URI
