@@ -33,7 +33,7 @@ public class PlayerNotification extends NotificationHelp {
     }
 
     public PlayerNotification(Context context) {
-        this(context, null);
+        this(context, PlayerNotification.class.getSimpleName());
     }
 
     public WeakReference<PlayerService> getPlayerServiceWeakReference() {

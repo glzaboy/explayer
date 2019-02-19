@@ -1,6 +1,7 @@
 package com.qintingfm.explayer.fragment;
 
 import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -41,27 +42,29 @@ public class PlayList extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view=inflater.inflate(R.layout.fegment_playlist,container,false);
         final RecyclerView viewById = view.findViewById(R.id.playlist);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this.getContext());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        viewById.setItemAnimator(new DefaultItemAnimator());
-        viewById.addItemDecoration(new DividerItemDecoration(this.getContext(),0));
-        final RecyclerAdapter recyclerAdpater = new RecyclerAdapter(new ArrayList<LocalMedia>());
-        recyclerAdpater.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                PlayerCore.startService(PlayList.this.getActivity().getApplicationContext());
-                Intent intent=new Intent(PlayList.this.getActivity(), PlayerService.class);
-                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_FROM_URI));
-                intent.setData(Uri.parse(((TextView)v.findViewById(R.id.data)).getText().toString()));
-                intent.putExtra("title",((TextView)v.findViewById(R.id.title)).getText().toString());
-                intent.putExtra("artist",((TextView)v.findViewById(R.id.artist)).getText().toString());
-                intent.putExtra("position",Integer.valueOf(((TextView)v.findViewById(R.id.id)).getText().toString()));
+        final Context context = getActivity();
+        if(context!=null){
+            LinearLayoutManager linearLayoutManager=new LinearLayoutManager(context);
+            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            viewById.setItemAnimator(new DefaultItemAnimator());
+            viewById.addItemDecoration(new DividerItemDecoration(context,0));
+            final RecyclerAdapter recyclerAdapter = new RecyclerAdapter(new ArrayList<LocalMedia>());
+            recyclerAdapter.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    PlayerCore.startService(context);
+                    Intent intent=new Intent(context, PlayerService.class);
+                    intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_FROM_URI));
+                    intent.setData(Uri.parse(((TextView)v.findViewById(R.id.data)).getText().toString()));
+                    intent.putExtra("title",((TextView)v.findViewById(R.id.title)).getText().toString());
+                    intent.putExtra("artist",((TextView)v.findViewById(R.id.artist)).getText().toString());
+                    intent.putExtra("position",Integer.valueOf(((TextView)v.findViewById(R.id.id)).getText().toString()));
 
-                PlayList.this.getActivity().startService(intent);
-                Toast.makeText(PlayList.this.getActivity(),((TextView)v.findViewById(R.id.data)).getText(),Toast.LENGTH_LONG).show();
-            }
-        });
-//        recyclerAdpater.setItemOnClickListener(new View.OnClickListener() {
+                    context.startService(intent);
+                    Toast.makeText(context,((TextView)v.findViewById(R.id.data)).getText(),Toast.LENGTH_LONG).show();
+                }
+            });
+//        recyclerAdapter.setItemOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //                TextView view1 = (TextView) v;
@@ -71,44 +74,45 @@ public class PlayList extends Fragment {
 //                }
 //            }
 //        });
-        viewById.setAdapter(recyclerAdpater );
-        viewById.setLayoutManager(linearLayoutManager);
-        final MediaStoreDatabase media_store_database = Room.databaseBuilder(this.getContext().getApplicationContext(), MediaStoreDatabase.class, "Media Store Database").build();
-        final LocalMediaDao localMediaDao = media_store_database.getLocalMediaDao();
-        Observable<LocalMedia> localMediaObservable = Observable.create(new ObservableOnSubscribe<LocalMedia>() {
-            @Override
-            public void subscribe(ObservableEmitter<LocalMedia> e) {
-                List<LocalMedia> all = localMediaDao.findAll();
-                for (LocalMedia localMedia:all){
-                    e.onNext(localMedia);
+            viewById.setAdapter(recyclerAdapter );
+            viewById.setLayoutManager(linearLayoutManager);
+            final MediaStoreDatabase media_store_database = Room.databaseBuilder(context.getApplicationContext(), MediaStoreDatabase.class, "Media Store Database").build();
+            final LocalMediaDao localMediaDao = media_store_database.getLocalMediaDao();
+            Observable<LocalMedia> localMediaObservable = Observable.create(new ObservableOnSubscribe<LocalMedia>() {
+                @Override
+                public void subscribe(ObservableEmitter<LocalMedia> e) {
+                    List<LocalMedia> all = localMediaDao.findAll();
+                    for (LocalMedia localMedia:all){
+                        e.onNext(localMedia);
+                    }
+                    e.onComplete();
+
                 }
-                e.onComplete();
+            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+            localMediaObservable.subscribe(
+                    new Observer<LocalMedia>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            recyclerAdapter.clearData();
+                        }
 
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        localMediaObservable.subscribe(
-                new Observer<LocalMedia>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        recyclerAdpater.clearData();
-                    }
+                        @Override
+                        public void onNext(LocalMedia localMedia) {
+                            recyclerAdapter.addData(localMedia);
+                        }
 
-                    @Override
-                    public void onNext(LocalMedia localMedia) {
-                        recyclerAdpater.addData(localMedia);
-                    }
+                        @Override
+                        public void onError(Throwable e) {
+                        }
 
-                    @Override
-                    public void onError(Throwable e) {
+                        @Override
+                        public void onComplete() {
+                            recyclerAdapter.notifyDataSetChanged();
+                            media_store_database.close();
+                        }
                     }
-
-                    @Override
-                    public void onComplete() {
-                        recyclerAdpater.notifyDataSetChanged();
-                        media_store_database.close();
-                    }
-                }
-        );
+            );
+        }
         return view;
     }
 }

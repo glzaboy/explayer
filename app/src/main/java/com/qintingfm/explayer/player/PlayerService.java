@@ -1,6 +1,5 @@
 package com.qintingfm.explayer.player;
 
-import android.app.PendingIntent;
 import android.app.Service;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
@@ -9,22 +8,16 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.*;
 import android.support.annotation.RequiresApi;
-import android.support.v4.media.app.NotificationCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.widget.Toast;
-import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.dao.LocalMediaDao;
-import com.qintingfm.explayer.dao.MediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
 import com.qintingfm.explayer.entity.LocalMedia;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class PlayerService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener,MediaPlayer.OnSeekCompleteListener{
@@ -38,7 +31,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     Messenger messenger;
     Messenger uiMessenger;
     Bundle bundle=new Bundle();
-    PlayerNotification playerNotificatio=null;
+    PlayerNotification playerNotification =null;
     MediaStoreDatabase media_store_database;
     LocalMediaDao localMediaDao;
     protected PlayerSeekTask playerSeekTask;
@@ -99,7 +92,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
                     mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mediaPlayer.getCurrentPosition(), 1.0f).build();
                     mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
                     mediaPlayer.start();
-                    playerNotificatio.updateNotify();
+                    playerNotification.updateNotify();
                     if(playerSeekTask==null){
                         playerSeekTask=new PlayerSeekTask(PlayerService.this);
                         playerSeekTask.start();
@@ -117,7 +110,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
                     mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PAUSED, mediaPlayer.getCurrentPosition(), 1.0f).build();
                     mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
                     mediaPlayer.pause();
-                    playerNotificatio.updateNotify();
+                    playerNotification.updateNotify();
                     if(playerSeekTask!=null){
                         playerSeekTask.cancel();
                         playerSeekTask=null;
@@ -186,7 +179,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
                     mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_STOPPED, mediaPlayer.getCurrentPosition(), 1.0f).build();
                     mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
                     mediaPlayer.stop();
-                    playerNotificatio.updateNotify();
+                    playerNotification.updateNotify();
                     break;
                 default:
             }
@@ -319,12 +312,12 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         mediaPlayer.setOnErrorListener(this);
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnSeekCompleteListener(this);
-        playerNotificatio = new PlayerNotification(this.getApplicationContext(), "Ex Player Core");
-        playerNotificatio.setPlayerServiceWeakReference(this);
-        playerNotificatio.updateNotify();
+        playerNotification = new PlayerNotification(this.getApplicationContext(), "Ex Player Core");
+        playerNotification.setPlayerServiceWeakReference(this);
+        playerNotification.updateNotify();
         media_store_database = Room.databaseBuilder(this.getApplicationContext(), MediaStoreDatabase.class, "Media Store Database").allowMainThreadQueries().build();
         localMediaDao = media_store_database.getLocalMediaDao();
-        startForeground(100, playerNotificatio.getBuilder().build());
+        startForeground(100, playerNotification.getBuilder().build());
         Log.d(TAG, "PlayerService onCreate");
     }
 
@@ -390,7 +383,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         mp.start();
         mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mp.getCurrentPosition(), 1.0f).build();
         mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-        playerNotificatio.updateNotify();
+        playerNotification.updateNotify();
         if(playerSeekTask==null){
             playerSeekTask=new PlayerSeekTask(this);
             playerSeekTask.start();
@@ -402,7 +395,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         mp.start();
         mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mp.getCurrentPosition(), 1.0f).build();
         mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-        playerNotificatio.updateNotify();
+        playerNotification.updateNotify();
     }
 
     /**
