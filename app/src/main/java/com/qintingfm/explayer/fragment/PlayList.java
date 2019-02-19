@@ -49,6 +49,7 @@ public class PlayList extends Fragment {
             viewById.setItemAnimator(new DefaultItemAnimator());
             viewById.addItemDecoration(new DividerItemDecoration(context,0));
             final RecyclerAdapter recyclerAdapter = new RecyclerAdapter(new ArrayList<LocalMedia>());
+
             recyclerAdapter.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {

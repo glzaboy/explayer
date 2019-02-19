@@ -1,15 +1,12 @@
 package com.qintingfm.explayer.fragment;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.qintingfm.explayer.R;
-import com.qintingfm.explayer.activity.UpdateLocalMediaActivity;
 
 public class HomeFragment extends Fragment implements View.OnClickListener{
     private static final String ARG_PARAM1 = "param1";
@@ -58,21 +55,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         return inflate;
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -92,17 +89,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(View v);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.update_local_media:
-                Intent intent=new Intent(this.getContext(), UpdateLocalMediaActivity.class);
-                this.startActivity(intent);
-                break;
-        }
-
+        mListener.onFragmentInteraction(v);
     }
 }

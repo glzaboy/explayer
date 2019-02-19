@@ -23,8 +23,6 @@ import java.lang.ref.WeakReference;
 public class Player extends Fragment implements View.OnClickListener{
     private static final String TAG= Player.class.getName();
     SeekBar seekBar;
-    private PlayerHandler mPlayerHandler=new PlayerHandler(this);
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +35,7 @@ public class Player extends Fragment implements View.OnClickListener{
         inflate.findViewById(R.id.play_pause).setOnClickListener(this);
         inflate.findViewById(R.id.next).setOnClickListener(this);
         inflate.findViewById(R.id.prev).setOnClickListener(this);
-        seekBar = (SeekBar)inflate.findViewById(R.id.seekBar);
+        seekBar = inflate.findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -51,11 +49,11 @@ public class Player extends Fragment implements View.OnClickListener{
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Intent intent=new Intent(Player.this.getActivity(), PlayerService.class);
+                Intent intent=new Intent(getActivity(), PlayerService.class);
                 intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SEEK_TO));
                 intent.putExtra("seek",seekBar.getProgress());
-                if(Player.this.getActivity()!=null){
-                    Player.this.getActivity().startService(intent);
+                if(getActivity()!=null){
+                    getActivity().startService(intent);
                 }
 
             }
@@ -65,7 +63,7 @@ public class Player extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        Intent intent=new Intent(this.getActivity(), PlayerService.class);
+        Intent intent=new Intent(getActivity(), PlayerService.class);
         switch (v.getId()){
             case R.id.play_pause:
                 intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_PAUSE));
@@ -77,23 +75,25 @@ public class Player extends Fragment implements View.OnClickListener{
                 intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
                 break;
         }
-        this.getActivity().startService(intent);
+        if(getActivity()!=null){
+            getActivity().startService(intent);
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        PlayerCore.attach(this.getActivity().getApplicationContext(),new PlayerHandler(this));
+        PlayerCore.attach(getActivity(),new PlayerHandler(this));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        PlayerCore.detach(this.getActivity().getApplicationContext());
+        PlayerCore.detach(getActivity());
     }
     private static class PlayerHandler extends Handler{
         WeakReference<Player> playerWeakReference;
-        public PlayerHandler(Player player) {
+        private PlayerHandler(Player player) {
             playerWeakReference=new WeakReference<>(player);
         }
 

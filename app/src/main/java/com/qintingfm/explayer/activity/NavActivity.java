@@ -14,7 +14,7 @@ import com.qintingfm.explayer.fragment.HomeFragment;
 import com.qintingfm.explayer.fragment.PlayList;
 import com.qintingfm.explayer.fragment.Player;
 
-public class NavActivity extends AppCompatActivity {
+public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener{
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -47,10 +47,6 @@ public class NavActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }else{
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
@@ -58,9 +54,6 @@ public class NavActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Ex Player");
             getSupportActionBar().setIcon(R.drawable.ic_music_black_24dp);
         }
-
-
-//        }
         setContentView(R.layout.activity_nav);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -101,6 +94,16 @@ public class NavActivity extends AppCompatActivity {
             View decorView = getWindow().getDecorView();
             int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
             decorView.setSystemUiVisibility(uiOptions);
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(View v) {
+        switch (v.getId()){
+            case R.id.update_local_media:
+                Intent intent=new Intent(this, UpdateLocalMediaActivity.class);
+                this.startActivity(intent);
+                break;
         }
     }
 }
