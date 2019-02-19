@@ -12,21 +12,21 @@ import com.qintingfm.explayer.notification.NotificationHelp;
 import java.lang.ref.WeakReference;
 
 public class PlayerNotification extends NotificationHelp {
-    WeakReference<PlayerService> playerServiceWeakReference;
-    NotificationCompat.Action playAction = new NotificationCompat.Action(android.R.drawable.ic_media_play
+    private WeakReference<PlayerService> playerServiceWeakReference;
+    private NotificationCompat.Action playAction = new NotificationCompat.Action(android.R.drawable.ic_media_play
             , "播放", PendingIntent.getService(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY)), PendingIntent.FLAG_UPDATE_CURRENT));
 
-    NotificationCompat.Action pauseAction = new NotificationCompat.Action(android.R.drawable.ic_media_pause
+    private NotificationCompat.Action pauseAction = new NotificationCompat.Action(android.R.drawable.ic_media_pause
             , "暂停", PendingIntent.getService(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_PAUSE)), PendingIntent.FLAG_UPDATE_CURRENT));
 
-    NotificationCompat.Action prevAction = new NotificationCompat.Action(android.R.drawable.ic_media_previous
+    private NotificationCompat.Action prevAction = new NotificationCompat.Action(android.R.drawable.ic_media_previous
             , "上一首", PendingIntent.getService(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)), PendingIntent.FLAG_UPDATE_CURRENT));
-    NotificationCompat.Action nextAction = new NotificationCompat.Action(android.R.drawable.ic_media_next
+    private NotificationCompat.Action nextAction = new NotificationCompat.Action(android.R.drawable.ic_media_next
             , "暂停", PendingIntent.getService(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT)), PendingIntent.FLAG_UPDATE_CURRENT));
 
-    NotificationCompat.Action appAction = new NotificationCompat.Action(R.drawable.ic_music_black_24dp
+    private NotificationCompat.Action appAction = new NotificationCompat.Action(R.drawable.ic_music_black_24dp
             , "进入应用", PendingIntent.getActivity(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), NavActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
-    NotificationCompat.Action playListAction = new NotificationCompat.Action(R.drawable.ic_queue_music_list_24dp
+    private NotificationCompat.Action playListAction = new NotificationCompat.Action(R.drawable.ic_queue_music_list_24dp
             , "进入应用", PendingIntent.getActivity(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), NavActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
     public PlayerNotification(Context context, String notifyTag) {
         super(context, notifyTag);
@@ -44,7 +44,7 @@ public class PlayerNotification extends NotificationHelp {
         this.playerServiceWeakReference = new WeakReference<>(playerService);
     }
 
-    public void updateNotify(){
+    protected void updateNotify(){
         PlayerService playerService = getPlayerServiceWeakReference().get();
         if(playerService!=null){
             getDefault(R.drawable.ic_music_black_24dp, playerService.bundle.getString("title"), playerService.bundle.getString("artist"));
@@ -59,15 +59,12 @@ public class PlayerNotification extends NotificationHelp {
                 setOngoing(true);
             }
             setOnClick(PendingIntent.getActivity(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), NavActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
-//            addAction(prevAction).addAction(playAction).addAction(nextAction);
             setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle().setShowCancelButton(true).setShowActionsInCompactView(0, 1, 2).setMediaSession(getPlayerServiceWeakReference().get().mediaSessionCompat.getSessionToken()));
             setNubmber(0);
             setLargeIcon(R.drawable.pig);
             playerService.startForeground(this.getClass().hashCode(),getBuilder().build());
-            if(playerService.mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PLAYING){
-            }else if(playerService.mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PAUSED){
+            if(playerService.mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PAUSED || playerService.mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_STOPPED){
                 playerService.stopForeground(false);
-            }else{
             }
         }
     }

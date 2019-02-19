@@ -54,14 +54,14 @@ public class MainActivity extends AppCompatActivity {
             }else {
                 Intent intent=new Intent(this,NavActivity.class);
                 intent.setData(getIntent().getData());
-                intent.putExtra("play_source","Launcher");
+                intent.putExtra("play_source","LAUNCHER");
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         }else {
             Intent intent=new Intent(this,NavActivity.class);
             intent.setData(getIntent().getData());
-            intent.putExtra("play_source","Launcher");
+            intent.putExtra("play_source","LAUNCHER");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }

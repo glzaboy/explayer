@@ -13,11 +13,9 @@ import java.util.List;
 
 public class PlayerCore {
     private static final String TAG=PlayerCore.class.getName();
-    public static boolean mBound = false;
-    public static Messenger MusicMessenger;
-//    static PlayerEvent playerEvent;
-    static Messenger uiMessenger;
-    static private boolean isServiceRunning(Context packageContext){
+    private static Messenger MusicMessenger;
+    private static Messenger uiMessenger;
+    private static  boolean isServiceRunning(Context packageContext){
         ActivityManager systemService = (ActivityManager)packageContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices = systemService.getRunningServices(50);
         for (ActivityManager.RunningServiceInfo runningServiceInfo:runningServices) {
@@ -32,7 +30,6 @@ public class PlayerCore {
         if(!isServiceRunning(packageContext)){
             Intent intent=new Intent(packageContext,PlayerService.class);
             packageContext.startService(intent);
-//            PlayerCore.playerEvent=new PlayerEvent();
             Log.d(TAG,"启动服务：");
         }else{
             Log.d(TAG,"启动服务：服务已经在运行");
@@ -52,13 +49,11 @@ public class PlayerCore {
         Intent intent = new Intent(packageContext, PlayerService.class);
         packageContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         PlayerCore.uiMessenger=new Messenger(handler);
-//        PlayerTimerTask.start();
     }
     public static synchronized void detach(Context packageContext){
         if (PlayerCore.uiMessenger!=null) {
             PlayerCore.uiMessenger=null;
             packageContext.unbindService(mConnection);
-//            PlayerTimerTask.stop();
         }
     }
     /** Defines callbacks for service binding, passed to bindService() */
@@ -82,12 +77,10 @@ public class PlayerCore {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
             PlayerCore.MusicMessenger=null;
             PlayerCore.uiMessenger=null;
         }

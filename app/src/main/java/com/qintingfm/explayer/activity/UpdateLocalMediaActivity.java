@@ -19,10 +19,10 @@ import java.lang.ref.WeakReference;
 public class UpdateLocalMediaActivity extends AppCompatActivity {
     final static String TAG = UpdateLocalMediaActivity.class.getName();
 
-    private static class MediaScanfHandler extends Handler {
+    private static class MediaScanHandler extends Handler {
         WeakReference<UpdateLocalMediaActivity> mUpdateLocalMediaActivityWeakReference;
 
-        private MediaScanfHandler(UpdateLocalMediaActivity updateLocalMediaActivity) {
+        private MediaScanHandler(UpdateLocalMediaActivity updateLocalMediaActivity) {
             this.mUpdateLocalMediaActivityWeakReference = new WeakReference<>(updateLocalMediaActivity);
         }
 
@@ -69,17 +69,12 @@ public class UpdateLocalMediaActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        MediaStoreCon.attach(this, new MediaScanfHandler(this));
+        MediaStoreCon.attach(this, new MediaScanHandler(this));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         MediaStoreCon.detach(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }
