@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.fegment;
+package com.qintingfm.explayer.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;

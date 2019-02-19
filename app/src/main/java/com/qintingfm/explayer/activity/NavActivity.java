@@ -10,9 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import com.qintingfm.explayer.R;
-import com.qintingfm.explayer.fegment.HomeFragment;
-import com.qintingfm.explayer.fegment.PlayList;
-import com.qintingfm.explayer.fegment.Player;
+import com.qintingfm.explayer.fragment.HomeFragment;
+import com.qintingfm.explayer.fragment.PlayList;
+import com.qintingfm.explayer.fragment.Player;
 
 public class NavActivity extends AppCompatActivity {
 

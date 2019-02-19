@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.fegment;
+package com.qintingfm.explayer.fragment;
 
 import android.arch.persistence.room.Room;
 import android.content.Intent;
