@@ -42,7 +42,7 @@ public class Player extends Fragment implements View.OnClickListener,SeekBar.OnS
     @Override
     public void onClick(View v) {
         if(mListener!=null){
-            mListener.onFragmentInteraction(v);
+            mListener.onPlayerInteraction(v);
         }
     }
 
@@ -94,10 +94,10 @@ public class Player extends Fragment implements View.OnClickListener,SeekBar.OnS
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(View v);
-        void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser);
-        void onStartTrackingTouch(SeekBar seekBar);
-        void onStopTrackingTouch(SeekBar seekBar);
+        void onPlayerInteraction(View v);
+        void onPlayerProgressChanged(SeekBar seekBar, int progress, boolean fromUser);
+        void onPlayerStartTrackingTouch(SeekBar seekBar);
+        void onPlayerStopTrackingTouch(SeekBar seekBar);
     }
 
     @Override
@@ -118,16 +118,16 @@ public class Player extends Fragment implements View.OnClickListener,SeekBar.OnS
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mListener.onProgressChanged(seekBar,progress,fromUser);
+        mListener.onPlayerProgressChanged(seekBar,progress,fromUser);
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        mListener.onStartTrackingTouch(seekBar);
+        mListener.onPlayerStartTrackingTouch(seekBar);
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        mListener.onStopTrackingTouch(seekBar);
+        mListener.onPlayerStopTrackingTouch(seekBar);
     }
 }

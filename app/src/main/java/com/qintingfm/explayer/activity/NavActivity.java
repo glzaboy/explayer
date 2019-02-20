@@ -1,6 +1,7 @@
 package com.qintingfm.explayer.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -11,13 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.fragment.HomeFragment;
 import com.qintingfm.explayer.fragment.PlayList;
 import com.qintingfm.explayer.fragment.Player;
+import com.qintingfm.explayer.player.PlayerCore;
 import com.qintingfm.explayer.player.PlayerService;
 
-public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, Player.OnFragmentInteractionListener {
+public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, Player.OnFragmentInteractionListener,PlayList.OnFragmentInteractionListener {
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -99,13 +103,19 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
     }
 
     @Override
-    public void onFragmentInteraction(View v) {
-        Intent playerServiceIntent = new Intent(this, PlayerService.class);
+    public void onHomeInteraction(View v) {
         Intent updateLocalMediaIntent = new Intent(this, UpdateLocalMediaActivity.class);
         switch (v.getId()) {
             case R.id.update_local_media:
                 this.startActivity(updateLocalMediaIntent);
                 break;
+        }
+    }
+
+    @Override
+    public void onPlayerInteraction(View v) {
+        Intent playerServiceIntent = new Intent(this, PlayerService.class);
+        switch (v.getId()) {
             case R.id.play_pause:
                 playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_PAUSE));
                 startService(playerServiceIntent);
@@ -122,17 +132,31 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    public void onPlayListInteraction(View v) {
+        PlayerCore.startService(this);
+        Intent intent=new Intent(this, PlayerService.class);
+        intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_FROM_URI));
+        intent.setData(Uri.parse(((TextView)v.findViewById(R.id.data)).getText().toString()));
+        intent.putExtra("title",((TextView)v.findViewById(R.id.title)).getText().toString());
+        intent.putExtra("artist",((TextView)v.findViewById(R.id.artist)).getText().toString());
+        intent.putExtra("position",Integer.valueOf(((TextView)v.findViewById(R.id.id)).getText().toString()));
+
+        startService(intent);
+        Toast.makeText(this,((TextView)v.findViewById(R.id.data)).getText(),Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onPlayerProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
     }
 
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
+    public void onPlayerStartTrackingTouch(SeekBar seekBar) {
 
     }
 
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
+    public void onPlayerStopTrackingTouch(SeekBar seekBar) {
         switch (seekBar.getId()) {
             case R.id.seekBar:
                 Intent intent = new Intent(this, PlayerService.class);

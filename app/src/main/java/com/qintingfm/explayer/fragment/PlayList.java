@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayList extends Fragment {
+    private PlayList.OnFragmentInteractionListener mListener;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -53,16 +54,7 @@ public class PlayList extends Fragment {
             recyclerAdapter.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    PlayerCore.startService(context);
-                    Intent intent=new Intent(context, PlayerService.class);
-                    intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_FROM_URI));
-                    intent.setData(Uri.parse(((TextView)v.findViewById(R.id.data)).getText().toString()));
-                    intent.putExtra("title",((TextView)v.findViewById(R.id.title)).getText().toString());
-                    intent.putExtra("artist",((TextView)v.findViewById(R.id.artist)).getText().toString());
-                    intent.putExtra("position",Integer.valueOf(((TextView)v.findViewById(R.id.id)).getText().toString()));
-
-                    context.startService(intent);
-                    Toast.makeText(context,((TextView)v.findViewById(R.id.data)).getText(),Toast.LENGTH_LONG).show();
+                    mListener.onPlayListInteraction(v);
                 }
             });
 //        recyclerAdapter.setItemOnClickListener(new View.OnClickListener() {
@@ -115,5 +107,25 @@ public class PlayList extends Fragment {
             );
         }
         return view;
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onPlayListInteraction(View v);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof PlayList.OnFragmentInteractionListener) {
+            mListener = (PlayList.OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 }

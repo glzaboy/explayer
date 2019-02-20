@@ -89,11 +89,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(View v);
+        void onHomeInteraction(View v);
     }
 
     @Override
     public void onClick(View v) {
-        mListener.onFragmentInteraction(v);
+        mListener.onHomeInteraction(v);
     }
 }
