@@ -48,6 +48,7 @@ public class PlayerNotification extends NotificationHelp {
         PlayerService playerService = getPlayerServiceWeakReference().get();
         if(playerService!=null){
             getDefault(R.drawable.ic_music_black_24dp, playerService.bundle.getString("title"), playerService.bundle.getString("artist"));
+            getBuilder().setDefaults(0);
             if(playerService.mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PLAYING){
                 addAction(prevAction).addAction(pauseAction).addAction(nextAction);
                 setOngoing(true);

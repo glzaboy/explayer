@@ -1,17 +1,22 @@
 package com.qintingfm.explayer.player;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.net.rtp.AudioStream;
 import android.os.*;
 import android.support.annotation.RequiresApi;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import android.view.KeyEvent;
+import com.qintingfm.explayer.RemoteMediaButtonReceiver;
 import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
 import com.qintingfm.explayer.entity.LocalMedia;
@@ -35,6 +40,8 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     MediaStoreDatabase mediaStoreDatabase;
     LocalMediaDao localMediaDao;
     protected PlayerSeekTask playerSeekTask;
+    AudioManager audioManager;
+    private PlayerAudioManagerListener playerAudioManagerListener=new PlayerAudioManagerListener(this);
     MediaSessionCompat.Callback mediaSessionCompatCallback = new MediaSessionCompat.Callback() {
         @Override
         public void onCommand(String command, Bundle extras, ResultReceiver cb) {
@@ -88,6 +95,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
             super.onPlay();
             switch (mPlaybackStateCompat.getState()) {
                 case PlaybackStateCompat.STATE_PAUSED:
+                    reqAudioFocus();
                     mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mediaPlayer.getCurrentPosition(), 1.0f).build();
                     mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
                     mediaPlayer.start();
@@ -180,6 +188,31 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 
         @Override
         public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
+            String action = mediaButtonEvent.getAction();
+            KeyEvent keyEvent=(KeyEvent)mediaButtonEvent.getExtras().get(Intent.EXTRA_KEY_EVENT);
+            switch (keyEvent.getKeyCode()){
+                case KeyEvent.KEYCODE_HEADSETHOOK:
+                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                    if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                        mediaControllerCompat.getTransportControls().pause();
+                    } else if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
+                        mediaControllerCompat.getTransportControls().play();
+                    }
+                    break;
+                case KeyEvent.KEYCODE_MEDIA_PLAY:
+                    mediaControllerCompat.getTransportControls().play();
+                    break;
+                case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                    mediaControllerCompat.getTransportControls().pause();
+                    break;
+                case KeyEvent.KEYCODE_MEDIA_NEXT:
+                    mediaControllerCompat.getTransportControls().skipToNext();
+                    break;
+                case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+                    mediaControllerCompat.getTransportControls().skipToPrevious();
+                    break;
+            }
+            Log.i(TAG, "onMediaButtonEvent: " + mediaButtonEvent.getAction());
             return super.onMediaButtonEvent(mediaButtonEvent);
         }
 
@@ -227,6 +260,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        RemoteMediaButtonReceiver.handleIntent(mediaSessionCompat,intent);
         if (intent != null && intent.getAction() != null) {
             long aLong = Long.valueOf(intent.getAction());
             if (aLong == PlaybackStateCompat.ACTION_PLAY) {
@@ -292,6 +326,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 
         mediaSessionCompat.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
         mediaSessionCompat.setCallback(mediaSessionCompatCallback);
+        mediaSessionCompat.setMediaButtonReceiver(PendingIntent.getBroadcast(this,200,new Intent(this,RemoteMediaButtonReceiver.class),PendingIntent.FLAG_UPDATE_CURRENT));
 
         mediaControllerCompat = new MediaControllerCompat(this.getApplicationContext(), mediaSessionCompat);
 
@@ -319,7 +354,6 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         stopForeground(true);
         Log.d(TAG, "PlayerService onDestroy");
         if (mediaPlayer != null) {
-//
 //            try {
 //                mediaPlayer.releaseDrm();
 //            } catch (MediaPlayer.NoDrmSchemeException e) {
@@ -340,9 +374,6 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
             playerSeekTask.stop();
             playerSeekTask = null;
         }
-
-
-//        PlayerCore.destroyPlayer();
     }
 
     @Override
@@ -409,6 +440,23 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
             }
         }
     }
+    public void reqAudioFocus(){
+        if(audioManager==null){
+            audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        }
+        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        int i = audioManager.requestAudioFocus(playerAudioManagerListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if(i==AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
+
+        }
+    }
+    public void loseAudioFocus(){
+        if(audioManager==null){
+            audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        }
+        audioManager.abandonAudioFocus(playerAudioManagerListener);
+    }
+
 
     @PlaybackStateCompat.Actions
     public long getAvailableActions() {
