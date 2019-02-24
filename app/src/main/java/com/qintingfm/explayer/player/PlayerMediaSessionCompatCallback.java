@@ -26,8 +26,6 @@ public class PlayerMediaSessionCompatCallback extends MediaSessionCompat.Callbac
 
     public Timer headsetTimer = new Timer();
 
-    public boolean isFinishHeadsetClick = false;
-
     @Override
     public void onCommand(String command, Bundle extras, ResultReceiver cb) {
         super.onCommand(command, extras, cb);
@@ -191,36 +189,11 @@ public class PlayerMediaSessionCompatCallback extends MediaSessionCompat.Callbac
                     return super.onMediaButtonEvent(mediaButtonEvent);
                 }
                 if (headsetClick == 0) {
-//                    isFinishHeadsetClick = false;
                     headsetClick++;
                     headsetTimer.schedule(new PlayerHeadsetClick(this), 1000, 2000);
                 }else{
                     headsetClick++;
                 }
-
-//                if (isFinishHeadsetClick == true) {
-//                    switch (headsetClick) {
-//                        case 1:
-//                            if (playerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-//                                playerService.mediaControllerCompat.getTransportControls().pause();
-//                            } else if (playerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
-//                                playerService.mediaControllerCompat.getTransportControls().play();
-//                            }
-//                            break;
-//                        case 2:
-//                            playerService.mediaControllerCompat.getTransportControls().skipToNext();
-//                            break;
-//                        case 3:
-//                            playerService.mediaControllerCompat.getTransportControls().skipToPrevious();
-//                            break;
-//                        default:
-//
-//                    }
-//                    headsetClick = 0;
-//                    isFinishHeadsetClick = false;
-//                }
-
-
                 break;
             case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
                 if (playerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {

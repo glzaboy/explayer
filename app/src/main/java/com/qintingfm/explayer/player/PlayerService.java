@@ -8,25 +8,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.net.rtp.AudioStream;
 import android.os.*;
 import android.support.annotation.RequiresApi;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import com.qintingfm.explayer.RemoteMediaButtonReceiver;
 import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
-import com.qintingfm.explayer.entity.LocalMedia;
 import com.qintingfm.explayer.receiver.HeadsetPlugReceiver;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class PlayerService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener {
