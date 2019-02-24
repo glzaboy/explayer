@@ -95,7 +95,6 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
             super.onPlay();
             switch (mPlaybackStateCompat.getState()) {
                 case PlaybackStateCompat.STATE_PAUSED:
-                    reqAudioFocus();
                     mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mediaPlayer.getCurrentPosition(), 1.0f).build();
                     mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
                     mediaPlayer.start();
@@ -264,12 +263,14 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         if (intent != null && intent.getAction() != null) {
             long aLong = Long.valueOf(intent.getAction());
             if (aLong == PlaybackStateCompat.ACTION_PLAY) {
+                reqAudioFocus();
                 mediaControllerCompat.getTransportControls().play();
             }
             if (aLong == PlaybackStateCompat.ACTION_STOP) {
                 mediaControllerCompat.getTransportControls().stop();
             }
             if (aLong == PlaybackStateCompat.ACTION_PAUSE) {
+                loseAudioFocus();
                 mediaControllerCompat.getTransportControls().pause();
             }
             if (aLong == PlaybackStateCompat.ACTION_PLAY_FROM_URI) {
@@ -285,8 +286,10 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
             }
             if (aLong == PlaybackStateCompat.ACTION_PLAY_PAUSE) {
                 if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    loseAudioFocus();
                     mediaControllerCompat.getTransportControls().pause();
                 } else if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
+                    reqAudioFocus();
                     mediaControllerCompat.getTransportControls().play();
                 }
             }
@@ -398,6 +401,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        reqAudioFocus();
         mp.start();
         mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mp.getCurrentPosition(), 1.0f).build();
         mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
