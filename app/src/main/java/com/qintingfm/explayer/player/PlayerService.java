@@ -5,6 +5,7 @@ import android.app.Service;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -20,17 +21,20 @@ import com.qintingfm.explayer.RemoteMediaButtonReceiver;
 import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
 import com.qintingfm.explayer.entity.LocalMedia;
+import com.qintingfm.explayer.receiver.HeadsetPlugReceiver;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class PlayerService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener {
     static final String TAG = PlayerService.class.getName();
     MediaSessionCompat mediaSessionCompat;
     PlaybackStateCompat.Builder mPlaybackBuilder;
-    PlaybackStateCompat mPlaybackStateCompat;
-    MediaControllerCompat mediaControllerCompat;
+    public PlaybackStateCompat mPlaybackStateCompat;
+    public MediaControllerCompat mediaControllerCompat;
     protected MediaPlayer mediaPlayer;
     PlayerServiceHandle playerServiceHandle;
     Messenger messenger;
@@ -38,184 +42,12 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     Bundle bundle = new Bundle();
     PlayerNotification playerNotification = null;
     MediaStoreDatabase mediaStoreDatabase;
-    LocalMediaDao localMediaDao;
+    protected LocalMediaDao localMediaDao;
     protected PlayerSeekTask playerSeekTask;
     AudioManager audioManager;
+    private HeadsetPlugReceiver headsetPlugReceiver=new HeadsetPlugReceiver(this);
     private PlayerAudioManagerListener playerAudioManagerListener=new PlayerAudioManagerListener(this);
-    MediaSessionCompat.Callback mediaSessionCompatCallback = new MediaSessionCompat.Callback() {
-        @Override
-        public void onCommand(String command, Bundle extras, ResultReceiver cb) {
-            super.onCommand(command, extras, cb);
-        }
-
-        @Override
-        public void onPlayFromUri(Uri uri, Bundle extras) {
-            if (extras.getString("title") == null) {
-                extras.putString("title", "Ex player No title");
-            }
-            mediaPlayer.reset();
-            try {
-                mediaPlayer.setDataSource(uri.getPath());
-                mediaPlayer.prepareAsync();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            bundle = extras;
-            super.onPlayFromUri(uri, extras);
-        }
-
-        @Override
-        public void onPlayFromMediaId(String mediaId, Bundle extras) {
-            if (extras.getString("title") == null) {
-                extras.putString("title", "No title");
-            }
-            bundle = extras;
-            super.onPlayFromMediaId(mediaId, extras);
-        }
-
-        @Override
-        public void onPlayFromSearch(String query, Bundle extras) {
-            if (extras.getString("title") == null) {
-                extras.putString("title", "Ex player query");
-            }
-            if (extras.getString("artist") == null) {
-                extras.putString("artist", null);
-            }
-            bundle = extras;
-            super.onPlayFromSearch(query, extras);
-        }
-
-        @Override
-        public void onPrepare() {
-            super.onPrepare();
-        }
-
-        @Override
-        public void onPlay() {
-            super.onPlay();
-            switch (mPlaybackStateCompat.getState()) {
-                case PlaybackStateCompat.STATE_PAUSED:
-                    mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mediaPlayer.getCurrentPosition(), 1.0f).build();
-                    mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-                    mediaPlayer.start();
-                    playerNotification.updateNotify();
-                    break;
-                default:
-            }
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            switch (mPlaybackStateCompat.getState()) {
-                case PlaybackStateCompat.STATE_PLAYING:
-                    mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PAUSED, mediaPlayer.getCurrentPosition(), 1.0f).build();
-                    mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-                    mediaPlayer.pause();
-                    playerNotification.updateNotify();
-                    break;
-                default:
-            }
-        }
-
-        @Override
-        public void onSkipToNext() {
-            super.onSkipToNext();
-            LocalMedia position = localMediaDao.findNext(bundle.getInt("position"));
-            if (position != null) {
-                Bundle extras = new Bundle();
-                extras.putString("title", position.getTitle());
-                extras.putString("artist", position.getArtist());
-                extras.putInt("position", position.getId());
-                this.onPlayFromUri(Uri.parse(position.getData()), extras);
-            }
-        }
-
-        @Override
-        public void onSkipToPrevious() {
-            super.onSkipToPrevious();
-            LocalMedia position = localMediaDao.findPrev(bundle.getInt("position"));
-            if (position != null) {
-                Bundle extras = new Bundle();
-                extras.putString("title", position.getTitle());
-                extras.putString("artist", position.getArtist());
-                extras.putInt("position", position.getId());
-                this.onPlayFromUri(Uri.parse(position.getData()), extras);
-            }
-
-
-        }
-
-        @Override
-        public void onSeekTo(long pos) {
-            super.onSeekTo(pos);
-            switch (mPlaybackStateCompat.getState()) {
-                case PlaybackStateCompat.STATE_PLAYING:
-                    mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_REWINDING, pos, 1.0f).build();
-                    mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-                    mediaPlayer.seekTo((int) pos);
-                    break;
-                default:
-            }
-        }
-
-        @Override
-        public void onSetRepeatMode(int repeatMode) {
-            super.onSetRepeatMode(repeatMode);
-        }
-
-        @Override
-        public void onSetShuffleMode(int shuffleMode) {
-            super.onSetShuffleMode(shuffleMode);
-        }
-
-        @Override
-        public void onStop() {
-            super.onStop();
-            switch (mPlaybackStateCompat.getState()) {
-                case PlaybackStateCompat.STATE_PLAYING:
-                    mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_STOPPED, mediaPlayer.getCurrentPosition(), 1.0f).build();
-                    mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-                    mediaPlayer.stop();
-                    playerNotification.updateNotify();
-                    break;
-                default:
-            }
-
-
-        }
-
-        @Override
-        public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
-            String action = mediaButtonEvent.getAction();
-            KeyEvent keyEvent=(KeyEvent)mediaButtonEvent.getExtras().get(Intent.EXTRA_KEY_EVENT);
-            switch (keyEvent.getKeyCode()){
-                case KeyEvent.KEYCODE_HEADSETHOOK:
-                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                    if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-                        mediaControllerCompat.getTransportControls().pause();
-                    } else if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
-                        mediaControllerCompat.getTransportControls().play();
-                    }
-                    break;
-                case KeyEvent.KEYCODE_MEDIA_PLAY:
-                    mediaControllerCompat.getTransportControls().play();
-                    break;
-                case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                    mediaControllerCompat.getTransportControls().pause();
-                    break;
-                case KeyEvent.KEYCODE_MEDIA_NEXT:
-                    mediaControllerCompat.getTransportControls().skipToNext();
-                    break;
-                case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    mediaControllerCompat.getTransportControls().skipToPrevious();
-                    break;
-            }
-            Log.i(TAG, "onMediaButtonEvent: " + mediaButtonEvent.getAction());
-            return super.onMediaButtonEvent(mediaButtonEvent);
-        }
-
-    };
+    MediaSessionCompat.Callback mediaSessionCompatCallback = new PlayerMediaSessionCompatCallback(this);
 
     public PlayerService() {
     }
@@ -341,6 +173,15 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         mediaPlayer.setOnErrorListener(this);
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnSeekCompleteListener(this);
+
+        //haeadset plug and unplug
+        IntentFilter headSetPlug=new IntentFilter();
+//        headSetPlug.addAction("android.intent.action.HEADSET_PLUG");
+        headSetPlug.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY  );
+        headSetPlug.addAction(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(headsetPlugReceiver,headSetPlug);
+
+
         playerNotification = new PlayerNotification(this.getApplicationContext(), "Ex Player Core");
         playerNotification.setPlayerServiceWeakReference(this);
         playerNotification.updateNotify();
@@ -371,7 +212,8 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         if (mediaSessionCompat != null) {
             mediaSessionCompat.release();
         }
-
+        loseAudioFocus();
+        unregisterReceiver(headsetPlugReceiver);
         mediaStoreDatabase.close();
         if (playerSeekTask != null) {
             playerSeekTask.stop();

@@ -19,6 +19,14 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <receiver
+                android:name=".receiver.HeadsetPlugReceiver"
+                android:enabled="true"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.HEADSET_PLUG"/>
+            </intent-filter>
+        </receiver>
+        <receiver
                 android:name=".RemoteMediaButtonReceiver"
                 android:enabled="true"
                 android:exported="true">
