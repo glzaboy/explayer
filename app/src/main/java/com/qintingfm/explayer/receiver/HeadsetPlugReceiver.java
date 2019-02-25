@@ -31,17 +31,17 @@ public class HeadsetPlugReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (intent.getAction().equalsIgnoreCase(AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+        if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equalsIgnoreCase(intent.getAction())) {
             if(playerService.mPlaybackStateCompat.getState()== PlaybackStateCompat.STATE_PLAYING){
                 Log.d(TAG,"ACTION_AUDIO_BECOMING_NOISY stop");
                 mPauseByHeadset=true;
                 playerService.mediaControllerCompat.getTransportControls().pause();
             }
-        } else if (intent.getAction().equalsIgnoreCase(Intent.ACTION_HEADSET_PLUG) && mPauseByHeadset==true) {
+        } else if (Intent.ACTION_HEADSET_PLUG.equalsIgnoreCase(intent.getAction()) && mPauseByHeadset) {
             if(intent.hasExtra("state")){
-                if(intent.getIntExtra("state",0)==0){
-
-                }
+//                if(intent.getIntExtra("state",0)==0){
+//
+//                }
                 if(intent.getIntExtra("state",0)==1){
                     Log.d(TAG,"ACTION_HEADSET_PLUG start");
                     mPauseByHeadset=false;

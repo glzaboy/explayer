@@ -180,7 +180,7 @@ public class PlayerMediaSessionCompatCallback extends MediaSessionCompat.Callbac
     @Override
     public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
         PlayerService playerService = playerServiceWeakReference.get();
-        String action = mediaButtonEvent.getAction();
+//        String action = mediaButtonEvent.getAction();
         KeyEvent keyEvent = (KeyEvent) mediaButtonEvent.getExtras().get(Intent.EXTRA_KEY_EVENT);
         switch (keyEvent.getKeyCode()) {
             case KeyEvent.KEYCODE_HEADSETHOOK://单键耳机单独点击播放或暂停，双击下一首，三击上一首。

@@ -120,19 +120,9 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
             }
             if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_NEXT) {
                 mediaControllerCompat.getTransportControls().skipToNext();
-//                if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PLAYING){
-//                    mediaControllerCompat.getTransportControls().skipToNext();
-//                }else if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PAUSED){
-//                    mediaControllerCompat.getTransportControls().skipToNext();
-//                }
             }
             if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) {
                 mediaControllerCompat.getTransportControls().skipToPrevious();
-//                if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PLAYING){
-//                    mediaControllerCompat.getTransportControls().skipToPrevious();
-//                }else if(mPlaybackStateCompat.getState()==PlaybackStateCompat.STATE_PAUSED){
-//                    mediaControllerCompat.getTransportControls().skipToPrevious();
-//                }
             }
         }
 
@@ -152,7 +142,7 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         mediaSessionCompat.setActive(true);
         mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
 
-        mediaSessionCompat.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
+        mediaSessionCompat.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
         mediaSessionCompat.setCallback(mediaSessionCompatCallback);
         mediaSessionCompat.setMediaButtonReceiver(PendingIntent.getBroadcast(this,200,new Intent(this,RemoteMediaButtonReceiver.class),PendingIntent.FLAG_UPDATE_CURRENT));
 
