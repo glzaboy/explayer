@@ -15,7 +15,8 @@ public class HeadsetPlugReceiver extends BroadcastReceiver {
     WeakReference<PlayerService> playerServiceWeakReference;
     boolean mPauseByHeadset=false;
 
-
+    public HeadsetPlugReceiver() {
+    }
 
     public HeadsetPlugReceiver(PlayerService playerService) {
         this.playerServiceWeakReference = new WeakReference<>(playerService);
