@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.*;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import java.util.List;
@@ -15,7 +14,6 @@ public class PlayerCore {
     private static final String TAG=PlayerCore.class.getName();
     private static Messenger MusicMessenger;
     private static Messenger uiMessenger;
-    boolean mBound = false;
     private static  boolean isServiceRunning(Context packageContext){
         ActivityManager systemService = (ActivityManager)packageContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices = systemService.getRunningServices(50);

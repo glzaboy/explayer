@@ -17,12 +17,14 @@ import android.util.Log;
 import com.qintingfm.explayer.RemoteMediaButtonReceiver;
 import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
+import com.qintingfm.explayer.fragment.Player;
 import com.qintingfm.explayer.receiver.HeadsetPlugReceiver;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 
-public class PlayerService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener {
+public class PlayerService extends Service {
     static final String TAG = PlayerService.class.getName();
     MediaSessionCompat mediaSessionCompat;
     PlaybackStateCompat.Builder mPlaybackBuilder;
@@ -42,6 +44,8 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
     private PlayerAudioManagerListener playerAudioManagerListener=new PlayerAudioManagerListener(this);
     MediaSessionCompat.Callback mediaSessionCompatCallback = new PlayerMediaSessionCompatCallback(this);
 
+    List<PlayerListener.OnStart> playerListenerList;
+    PlayerMediaPlayerListener playerMediaPlayerListener=new PlayerMediaPlayerListener(this);
     public PlayerService() {
     }
 
@@ -151,11 +155,11 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer.setOnBufferingUpdateListener(this);
-        mediaPlayer.setOnCompletionListener(this);
-        mediaPlayer.setOnErrorListener(this);
-        mediaPlayer.setOnPreparedListener(this);
-        mediaPlayer.setOnSeekCompleteListener(this);
+        mediaPlayer.setOnBufferingUpdateListener(playerMediaPlayerListener);
+        mediaPlayer.setOnCompletionListener(playerMediaPlayerListener);
+        mediaPlayer.setOnErrorListener(playerMediaPlayerListener);
+        mediaPlayer.setOnPreparedListener(playerMediaPlayerListener);
+        mediaPlayer.setOnSeekCompleteListener(playerMediaPlayerListener);
 
         //haeadset plug and unplug
         IntentFilter headSetPlug=new IntentFilter();
@@ -181,17 +185,9 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         stopForeground(true);
         Log.d(TAG, "PlayerService onDestroy");
         if (mediaPlayer != null) {
-//            try {
-//                mediaPlayer.releaseDrm();
-//            } catch (MediaPlayer.NoDrmSchemeException e) {
-//                e.printStackTrace();
-//            }
             mediaPlayer.release();
             mediaPlayer = null;
         }
-//        if(mediaControllerCompat!=null){
-//            mediaControllerCompat.setC(mediaSessionCompatCallback);
-//        }
         if (mediaSessionCompat != null) {
             mediaSessionCompat.release();
         }
@@ -201,51 +197,6 @@ public class PlayerService extends Service implements MediaPlayer.OnBufferingUpd
         if (playerSeekTask != null) {
             playerSeekTask.stop();
             playerSeekTask = null;
-        }
-    }
-
-    @Override
-    public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        Log.d(TAG, "Music Buffering %" + percent);
-        mPlaybackBuilder.setState(PlaybackStateCompat.STATE_BUFFERING, mediaPlayer.getCurrentPosition(), 1.0f);
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_STOPPED, mp.getCurrentPosition(), 1.0f).build();
-        mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-        mediaControllerCompat.getTransportControls().skipToNext();
-    }
-
-    @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        mPlaybackStateCompat = mPlaybackBuilder.setErrorMessage(what, "").build();
-        mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-        return true;
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        reqAudioFocus();
-        mp.start();
-        mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mp.getCurrentPosition(), 1.0f).build();
-        mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-        playerNotification.updateNotify();
-    }
-
-    @Override
-    public void onSeekComplete(MediaPlayer mp) {
-        mp.start();
-        mPlaybackStateCompat = mPlaybackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mp.getCurrentPosition(), 1.0f).build();
-        mediaSessionCompat.setPlaybackState(mPlaybackStateCompat);
-        playerNotification.updateNotify();
-        if (playerSeekTask!=null) {
-            playerSeekTask.stop();
-            playerSeekTask=null;
-        }
-        if (playerSeekTask == null) {
-            playerSeekTask = new PlayerSeekTask(this);
-            playerSeekTask.start();
         }
     }
 

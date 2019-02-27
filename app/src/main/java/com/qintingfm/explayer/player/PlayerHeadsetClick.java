@@ -1,6 +1,5 @@
 package com.qintingfm.explayer.player;
 
-import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import java.lang.ref.WeakReference;
