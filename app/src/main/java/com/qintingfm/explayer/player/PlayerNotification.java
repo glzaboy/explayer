@@ -3,13 +3,14 @@ package com.qintingfm.explayer.player;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.activity.NavActivity;
 import com.qintingfm.explayer.notification.NotificationHelp;
 
 import java.lang.ref.WeakReference;
+
+import androidx.core.app.NotificationCompat;
 
 public class PlayerNotification extends NotificationHelp {
     private WeakReference<PlayerService> playerServiceWeakReference;
@@ -60,7 +61,7 @@ public class PlayerNotification extends NotificationHelp {
                 setOngoing(true);
             }
             setOnClick(PendingIntent.getActivity(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), NavActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
-            setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle().setShowCancelButton(true).setShowActionsInCompactView(0, 1, 2).setMediaSession(getPlayerServiceWeakReference().get().mediaSessionCompat.getSessionToken()));
+//            setStyle(new NotificationCompat.MediaStyle().setShowCancelButton(true).setShowActionsInCompactView(0, 1, 2).setMediaSession(getPlayerServiceWeakReference().get().mediaSessionCompat.getSessionToken()));
             setNubmber(0);
             setLargeIcon(R.drawable.pig);
             playerService.startForeground(this.getClass().hashCode(),getBuilder().build());

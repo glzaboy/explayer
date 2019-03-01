@@ -1,7 +1,5 @@
 package com.qintingfm.explayer.fragment;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +10,9 @@ import com.qintingfm.explayer.entity.LocalMedia;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
     private static final String TAG=RecyclerAdapter.class.getName();

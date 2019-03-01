@@ -1,29 +1,23 @@
 package com.qintingfm.explayer.fragment;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
 import com.qintingfm.explayer.entity.LocalMedia;
-import com.qintingfm.explayer.player.PlayerCore;
-import com.qintingfm.explayer.player.PlayerService;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -46,7 +40,7 @@ public class PlayList extends Fragment {
         final Context context = getActivity();
         if(context!=null){
             LinearLayoutManager linearLayoutManager=new LinearLayoutManager(context);
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
             viewById.setItemAnimator(new DefaultItemAnimator());
             viewById.addItemDecoration(new DividerItemDecoration(context,0));
             final RecyclerAdapter recyclerAdapter = new RecyclerAdapter(new ArrayList<LocalMedia>());

@@ -10,8 +10,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
+
+import androidx.core.app.NotificationCompat;
 
 
 public abstract class NotificationHelp {
@@ -68,7 +69,7 @@ public abstract class NotificationHelp {
         builder.setWhen(System.currentTimeMillis());
         builder.setAutoCancel(true);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         }
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(content).setSummaryText(title).setSummaryText(title));
         return this;

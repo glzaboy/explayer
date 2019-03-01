@@ -2,14 +2,12 @@ package com.qintingfm.explayer.player;
 
 import android.app.PendingIntent;
 import android.app.Service;
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.*;
-import android.support.annotation.RequiresApi;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -17,11 +15,13 @@ import android.util.Log;
 import com.qintingfm.explayer.RemoteMediaButtonReceiver;
 import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
-import com.qintingfm.explayer.fragment.Player;
 import com.qintingfm.explayer.receiver.HeadsetPlugReceiver;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+
+import androidx.annotation.RequiresApi;
+import androidx.room.Room;
 
 
 public class PlayerService extends Service {

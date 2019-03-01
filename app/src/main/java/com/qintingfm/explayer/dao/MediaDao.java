@@ -1,6 +1,7 @@
 package com.qintingfm.explayer.dao;
 
-import android.arch.persistence.room.*;
+import androidx.room.Dao;
+
 @Dao
 public interface MediaDao {
 }

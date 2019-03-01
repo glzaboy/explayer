@@ -49,7 +49,7 @@ public class PlayerAudioManagerListener implements AudioManager.OnAudioFocusChan
                 if (playerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
                     volume = playerService.audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
                     if (volume > 0) {
-                        playerService.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume / 2, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+                        playerService.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
                     }
                     mPausedByTransientLossOfFocus = true;
                 }

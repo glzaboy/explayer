@@ -1,7 +1,6 @@
 package com.qintingfm.explayer.mediastore;
 
 import android.app.Service;
-import android.arch.persistence.room.Room;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,6 +10,8 @@ import android.util.Log;
 import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
 import com.qintingfm.explayer.entity.LocalMedia;
+
+import androidx.room.Room;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
