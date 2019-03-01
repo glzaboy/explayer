@@ -19,9 +19,12 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <service
-                android:name=".tinyplayer.TinyService"
+                android:name=".tiny_player.TinyPlayerService"
                 android:enabled="true"
                 android:exported="true">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
         </service>
 
         <receiver
