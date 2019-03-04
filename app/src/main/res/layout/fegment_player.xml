@@ -21,7 +21,7 @@
      <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                android:text="@string/text_artistName" android:id="@+id/artistName"
                app:layout_constraintBottom_toTopOf="@+id/seekBar"
-               android:textAlignment="center" android:textColor="@color/design_default_color_primary"/>
+               android:textAlignment="center" android:textColor="@color/colorPrimary"/>
      <SeekBar
              android:id="@+id/seekBar"
              android:layout_width="match_parent"
