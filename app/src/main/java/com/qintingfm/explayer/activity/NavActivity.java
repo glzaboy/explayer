@@ -1,8 +1,11 @@
 package com.qintingfm.explayer.activity;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.media.browse.MediaBrowser;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,9 +13,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.media.MediaBrowserServiceCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.fragment.HomeFragment;
+import com.qintingfm.explayer.fragment.MediaBrowserConnectionCallback;
 import com.qintingfm.explayer.fragment.PlayList;
 import com.qintingfm.explayer.fragment.Player;
 import com.qintingfm.explayer.player.PlayerCore;
@@ -22,9 +27,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import com.qintingfm.explayer.tiny_player.TinyPlayerService;
 
 public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, Player.OnFragmentInteractionListener,PlayList.OnFragmentInteractionListener {
-
+    MediaBrowserCompat mediaBrowserCompat;
+    MediaBrowserCompat.ConnectionCallback mediaBrowserConnectionCallback=new MediaBrowserConnectionCallback();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -110,6 +117,10 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
         switch (v.getId()) {
             case R.id.update_local_media:
                 this.startActivity(updateLocalMediaIntent);
+                break;
+            case R.id.button:
+                mediaBrowserCompat=new MediaBrowserCompat(this,new ComponentName(this, TinyPlayerService.class),mediaBrowserConnectionCallback,null);
+                mediaBrowserCompat.connect();
                 break;
         }
     }

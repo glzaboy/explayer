@@ -23,7 +23,7 @@ public class PlayerNotification extends NotificationHelp {
     private NotificationCompat.Action prevAction = new NotificationCompat.Action(android.R.drawable.ic_media_previous
             , "上一首", PendingIntent.getService(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)), PendingIntent.FLAG_UPDATE_CURRENT));
     private NotificationCompat.Action nextAction = new NotificationCompat.Action(android.R.drawable.ic_media_next
-            , "暂停", PendingIntent.getService(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT)), PendingIntent.FLAG_UPDATE_CURRENT));
+            , "下一首", PendingIntent.getService(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), PlayerService.class).setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT)), PendingIntent.FLAG_UPDATE_CURRENT));
 
     private NotificationCompat.Action appAction = new NotificationCompat.Action(R.drawable.ic_music_black_24dp
             , "进入应用", PendingIntent.getActivity(getContext().getApplicationContext(), 100, new Intent(getContext().getApplicationContext(), NavActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));

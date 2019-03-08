@@ -21,7 +21,8 @@
         <service
                 android:name=".tiny_player.TinyPlayerService"
                 android:enabled="true"
-                android:exported="true">
+                android:exported="true"
+                android:process=":tinyPlayer">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService"/>
             </intent-filter>

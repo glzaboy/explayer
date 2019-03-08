@@ -1,5 +1,6 @@
 package com.qintingfm.explayer.tiny_player;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -14,6 +15,11 @@ import java.util.List;
 public class TinyPlayerService extends MediaBrowserServiceCompat {
     private MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
+    MediaPlayer mMediaPlayer;
+
+
+
+
     @Nullable
     @Override
     public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
@@ -32,7 +38,12 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
 
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mediaSession.setCallback(new PlayerMediaSessionCompatCallback(this));
         setSessionToken(mediaSession.getSessionToken());
 
     }
+
+
+
+
 }

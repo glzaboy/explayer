@@ -56,6 +56,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         View inflate = inflater.inflate(R.layout.fragment_home, container, false);
         inflate.findViewById(R.id.update_local_media).setOnClickListener(this);
+        inflate.findViewById(R.id.button).setOnClickListener(this);
         return inflate;
     }
 
