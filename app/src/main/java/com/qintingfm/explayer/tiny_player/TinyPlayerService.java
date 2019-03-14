@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
@@ -12,11 +13,19 @@ import androidx.annotation.Nullable;
 import androidx.media.MediaBrowserServiceCompat;
 import com.qintingfm.explayer.player.PlayerMediaPlayerListener;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class TinyPlayerService extends MediaBrowserServiceCompat {
     private MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
+    List<MediaDescriptionCompat> mediaDescriptionCompatList=new LinkedList<>();
+//    PlayerAudioManagerListener playerAudioManagerListener=new PlayerAudioManagerListener(this);
+    PlayerMediaSessionCompatCallback playerMediaSessionCompatCallback=new PlayerMediaSessionCompatCallback(this);
+
+
+
+
     MediaPlayer mMediaPlayer;
     PlayerAudioManagerListener mPlayerAudioManagerListener=new PlayerAudioManagerListener(this);
 
@@ -43,9 +52,13 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
 
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        mediaSession.setCallback(new PlayerMediaSessionCompatCallback(this));
+        mediaSession.setCallback(playerMediaSessionCompatCallback);
         setSessionToken(mediaSession.getSessionToken());
-
+        stateBuilder=new PlaybackStateCompat.Builder();
+        setPlayBackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
+    }
+    private void setPlayBackState(@PlaybackStateCompat.State int state, long position, float playbackSpeed){
+        mediaSession.setPlaybackState(stateBuilder.setState(state,position,playbackSpeed).build());
     }
 
     @Override

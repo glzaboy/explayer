@@ -12,7 +12,11 @@ import java.util.List;
 
 public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callback {
     WeakReference<TinyPlayerService> tinyPlayerServiceWeakReference;
-    List<MediaDescriptionCompat> mediaDescriptionCompatList=new LinkedList<>();
+
+
+
+
+
     public PlayerMediaSessionCompatCallback(TinyPlayerService tinyPlayerService) {
         tinyPlayerServiceWeakReference=new WeakReference<>(tinyPlayerService);
     }
@@ -69,18 +73,21 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
     @Override
     public void onAddQueueItem(MediaDescriptionCompat description) {
         super.onAddQueueItem(description);
-        mediaDescriptionCompatList.add(description);
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        tinyPlayerService.mediaDescriptionCompatList.add(description);
     }
 
     @Override
     public void onAddQueueItem(MediaDescriptionCompat description, int index) {
         super.onAddQueueItem(description, index);
-        mediaDescriptionCompatList.add(index,description);
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        tinyPlayerService.mediaDescriptionCompatList.add(index,description);
     }
 
     @Override
     public void onRemoveQueueItem(MediaDescriptionCompat description) {
         super.onRemoveQueueItem(description);
-        mediaDescriptionCompatList.remove(description);
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        tinyPlayerService.mediaDescriptionCompatList.remove(description);
     }
 }

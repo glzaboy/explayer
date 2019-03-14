@@ -2,7 +2,6 @@ package com.qintingfm.explayer.activity;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.media.browse.MediaBrowser;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
@@ -13,7 +12,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.media.MediaBrowserServiceCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.fragment.HomeFragment;
