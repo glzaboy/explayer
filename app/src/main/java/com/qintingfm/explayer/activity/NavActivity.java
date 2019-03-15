@@ -28,8 +28,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.qintingfm.explayer.tiny_player.TinyPlayerService;
 
 public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, Player.OnFragmentInteractionListener,PlayList.OnFragmentInteractionListener {
-    MediaBrowserCompat mediaBrowserCompat;
-    MediaBrowserCompat.ConnectionCallback mediaBrowserConnectionCallback=new MediaBrowserConnectionCallback();
+    public MediaBrowserCompat mediaBrowserCompat;
+    MediaBrowserCompat.ConnectionCallback mediaBrowserConnectionCallback;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -117,8 +117,12 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
                 this.startActivity(updateLocalMediaIntent);
                 break;
             case R.id.button:
+                mediaBrowserConnectionCallback=new MediaBrowserConnectionCallback();
                 mediaBrowserCompat=new MediaBrowserCompat(this,new ComponentName(this, TinyPlayerService.class),mediaBrowserConnectionCallback,null);
+                ((MediaBrowserConnectionCallback) mediaBrowserConnectionCallback).setMediaBrowserCompatWeakReference(mediaBrowserCompat);
+                ((MediaBrowserConnectionCallback) mediaBrowserConnectionCallback).setAppCompatActivityWeakReference(this);
                 mediaBrowserCompat.connect();
+
                 break;
         }
     }

@@ -27,7 +27,7 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
 
 
     MediaPlayer mMediaPlayer;
-    PlayerAudioManagerListener mPlayerAudioManagerListener=new PlayerAudioManagerListener(this);
+    PlayerAudioManagerListener mPlayerAudioManagerListener;
 
 
 
@@ -43,11 +43,14 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
 
     @Override
     public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
+        result.sendResult(null);
+        return;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mPlayerAudioManagerListener=new PlayerAudioManagerListener(this);
         mediaSession=new MediaSessionCompat(this,this.getClass().getSimpleName());
 
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
