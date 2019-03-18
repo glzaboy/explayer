@@ -19,6 +19,7 @@ import java.util.List;
 public class TinyPlayerService extends MediaBrowserServiceCompat {
     private MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
+    private PlaybackStateCompat mPlaybackStateCompat;
     List<MediaDescriptionCompat> mediaDescriptionCompatList=new LinkedList<>();
 //    PlayerAudioManagerListener playerAudioManagerListener=new PlayerAudioManagerListener(this);
     PlayerMediaSessionCompatCallback playerMediaSessionCompatCallback=new PlayerMediaSessionCompatCallback(this);
@@ -60,7 +61,8 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
         setPlayBackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
     }
     private void setPlayBackState(@PlaybackStateCompat.State int state, long position, float playbackSpeed){
-        mediaSession.setPlaybackState(stateBuilder.setState(state,position,playbackSpeed).build());
+        mPlaybackStateCompat=stateBuilder.setState(state,position,playbackSpeed).build();
+        mediaSession.setPlaybackState(mPlaybackStateCompat);
     }
 
     @Override
@@ -69,40 +71,39 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
             long aLong = Long.valueOf(intent.getAction());
             if (aLong == PlaybackStateCompat.ACTION_PLAY) {
                 mPlayerAudioManagerListener.reqAudioFocus();
-//                mediaControllerCompat.getTransportControls().play();
+                playerMediaSessionCompatCallback.onPlay();
             }
             if (aLong == PlaybackStateCompat.ACTION_STOP) {
-//                mediaControllerCompat.getTransportControls().stop();
+                playerMediaSessionCompatCallback.onStop();
             }
             if (aLong == PlaybackStateCompat.ACTION_PAUSE) {
                 mPlayerAudioManagerListener.loseAudioFocus();
-//                mediaControllerCompat.getTransportControls().pause();
+                playerMediaSessionCompatCallback.onPause();
             }
             if (aLong == PlaybackStateCompat.ACTION_PLAY_FROM_URI) {
                 Bundle bundle = new Bundle();
                 bundle.putString("title", intent.getExtras().getString("title"));
                 bundle.putString("artist", intent.getExtras().getString("artist"));
                 bundle.putInt("position", intent.getExtras().getInt("position"));
-//                mediaControllerCompat.getTransportControls().playFromUri(intent.getData(), bundle);
             }
             if (aLong == PlaybackStateCompat.ACTION_SEEK_TO) {
                 int seek = intent.getExtras().getInt("seek");
-//                mediaControllerCompat.getTransportControls().seekTo(seek);
+                playerMediaSessionCompatCallback.onSeekTo(seek);
             }
             if (aLong == PlaybackStateCompat.ACTION_PLAY_PAUSE) {
-//                if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-//                    loseAudioFocus();
-//                    mediaControllerCompat.getTransportControls().pause();
-//                } else if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
-//                    reqAudioFocus();
-//                    mediaControllerCompat.getTransportControls().play();
-//                }
+                if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    playerMediaSessionCompatCallback.onPause();
+                    mPlayerAudioManagerListener.loseAudioFocus();
+                } else if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
+                    playerMediaSessionCompatCallback.onPlay();
+                    mPlayerAudioManagerListener.reqAudioFocus();
+                }
             }
             if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_NEXT) {
-//                mediaControllerCompat.getTransportControls().skipToNext();
+                playerMediaSessionCompatCallback.onSkipToNext();
             }
             if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) {
-//                mediaControllerCompat.getTransportControls().skipToPrevious();
+                playerMediaSessionCompatCallback.onSkipToPrevious();
             }
         }
 
