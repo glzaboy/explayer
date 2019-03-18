@@ -1,11 +1,13 @@
 package com.qintingfm.explayer.tiny_player;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,12 +15,33 @@ import java.util.List;
 public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callback {
     WeakReference<TinyPlayerService> tinyPlayerServiceWeakReference;
 
+    private MediaPlayer mediaPlayer;
 
 
 
+    private MediaPlayer getMediaPlayer(boolean reset){
+        if(mediaPlayer==null){
+            mediaPlayer=new MediaPlayer();
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.reset();
+        }
+        if(reset){
+            mediaPlayer.reset();
+        }
+        return mediaPlayer;
+
+    }
+    private void destoryMediaPlayer(boolean reset){
+        if(mediaPlayer!=null){
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer=null;
+        }
+    }
 
     public PlayerMediaSessionCompatCallback(TinyPlayerService tinyPlayerService) {
         tinyPlayerServiceWeakReference=new WeakReference<>(tinyPlayerService);
+
     }
 
     @Override
@@ -34,20 +57,24 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
     @Override
     public void onPrepareFromUri(Uri uri, Bundle extras) {
         super.onPrepareFromUri(uri, extras);
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        try {
+            getMediaPlayer(true).setDataSource(tinyPlayerService,uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onPlay() {
         super.onPlay();
-        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
-        if(tinyPlayerService.mMediaPlayer==null){
-            tinyPlayerService.mMediaPlayer=new MediaPlayer();
-        }
+        getMediaPlayer(false).start();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        getMediaPlayer(false).pause();
     }
 
     @Override
@@ -63,11 +90,7 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
     @Override
     public void onStop() {
         super.onStop();
-        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
-        if(tinyPlayerService.mMediaPlayer!=null){
-            tinyPlayerService.mMediaPlayer.release();
-            tinyPlayerService.mMediaPlayer=null;
-        }
+        destoryMediaPlayer(true);
     }
 
     @Override

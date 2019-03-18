@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.fragment.HomeFragment;
-import com.qintingfm.explayer.fragment.MediaBrowserConnectionCallback;
 import com.qintingfm.explayer.fragment.PlayList;
 import com.qintingfm.explayer.fragment.Player;
 import com.qintingfm.explayer.player.PlayerCore;
@@ -25,11 +24,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import com.qintingfm.explayer.tiny_player.TinyPlayerService;
+import com.qintingfm.explayer.tiny_player.PlayerClient;
 
 public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, Player.OnFragmentInteractionListener,PlayList.OnFragmentInteractionListener {
     public MediaBrowserCompat mediaBrowserCompat;
     MediaBrowserCompat.ConnectionCallback mediaBrowserConnectionCallback;
+
+    PlayerClient playerClient;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -69,6 +70,8 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
             getSupportActionBar().setIcon(R.drawable.ic_music_black_24dp);
         }
         setContentView(R.layout.activity_nav);
+        playerClient=new PlayerClient(this);
+        playerClient.onCreate(null);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -117,11 +120,6 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
                 this.startActivity(updateLocalMediaIntent);
                 break;
             case R.id.button:
-                mediaBrowserConnectionCallback=new MediaBrowserConnectionCallback();
-                mediaBrowserCompat=new MediaBrowserCompat(this,new ComponentName(this, TinyPlayerService.class),mediaBrowserConnectionCallback,null);
-                ((MediaBrowserConnectionCallback) mediaBrowserConnectionCallback).setMediaBrowserCompatWeakReference(mediaBrowserCompat);
-                ((MediaBrowserConnectionCallback) mediaBrowserConnectionCallback).setAppCompatActivityWeakReference(this);
-                mediaBrowserCompat.connect();
 
                 break;
         }
@@ -182,5 +180,23 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
             default:
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        playerClient.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        playerClient.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        playerClient.onResume();
     }
 }

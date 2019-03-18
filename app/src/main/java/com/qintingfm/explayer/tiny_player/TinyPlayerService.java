@@ -26,7 +26,6 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
 
 
 
-    MediaPlayer mMediaPlayer;
     PlayerAudioManagerListener mPlayerAudioManagerListener;
 
 
