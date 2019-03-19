@@ -19,7 +19,7 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
 
 
 
-    private MediaPlayer getMediaPlayer(boolean reset){
+    protected MediaPlayer getMediaPlayer(boolean reset){
         if(mediaPlayer==null){
             mediaPlayer=new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);

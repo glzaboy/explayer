@@ -2,6 +2,7 @@ package com.qintingfm.explayer.tiny_player;
 
 import android.content.Context;
 import android.media.AudioManager;
+import android.support.v4.media.session.PlaybackStateCompat;
 
 import java.lang.ref.WeakReference;
 
@@ -35,37 +36,45 @@ public class PlayerAudioManagerListener implements AudioManager.OnAudioFocusChan
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN://恢复长时播放
                 if ( mPausedByTransientLossOfFocus) {
-//                    playerService.mediaControllerCompat.getTransportControls().play();
+                    tinyPlayerService.playerMediaSessionCompatCallback.onPlay();
                 }
                 if (volume > 0) {
-//                    tinyPlayerService.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+                    if(audioManager.isVolumeFixed()){
+                        tinyPlayerService.playerMediaSessionCompatCallback.getMediaPlayer(false).setVolume(1.0f,1.0f);
+                    }else{
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+                    }
                 }
                 volume = 0;
                 break;
             case AudioManager.AUDIOFOCUS_LOSS://
                 tinyPlayerService.mPlayerAudioManagerListener.loseAudioFocus();
-//                playerService.loseAudioFocus();
-//                if (playerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-//                    playerService.mediaControllerCompat.getTransportControls().pause();
-//                }
+                if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    tinyPlayerService.playerMediaSessionCompatCallback.onPause();
+                }
 
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-//                if (playerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-//                    playerService.mediaControllerCompat.getTransportControls().pause();
-//                    mPausedByTransientLossOfFocus = true;
-//                }
+                if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    tinyPlayerService.playerMediaSessionCompatCallback.onPause();
+                    mPausedByTransientLossOfFocus = true;
+                }
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-//                if (playerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-//                    volume = playerService.audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-//                    if (volume > 0) {
-//                        playerService.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-//                    }
-//                    mPausedByTransientLossOfFocus = true;
-//                }
+                if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    if(audioManager.isVolumeFixed()){
+                        tinyPlayerService.playerMediaSessionCompatCallback.getMediaPlayer(false).setVolume(0.1f,0.1f);
+                        volume=1;
+                    }else{
+                        volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                        if (volume > 0) {
+                            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+                        }
+                    }
+                    mPausedByTransientLossOfFocus = true;
+                }
 
 
                 break;

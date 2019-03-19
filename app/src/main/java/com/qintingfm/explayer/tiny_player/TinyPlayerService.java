@@ -19,7 +19,7 @@ import java.util.List;
 public class TinyPlayerService extends MediaBrowserServiceCompat {
     private MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
-    private PlaybackStateCompat mPlaybackStateCompat;
+    protected PlaybackStateCompat mPlaybackStateCompat;
     List<MediaDescriptionCompat> mediaDescriptionCompatList=new LinkedList<>();
 //    PlayerAudioManagerListener playerAudioManagerListener=new PlayerAudioManagerListener(this);
     PlayerMediaSessionCompatCallback playerMediaSessionCompatCallback=new PlayerMediaSessionCompatCallback(this);
