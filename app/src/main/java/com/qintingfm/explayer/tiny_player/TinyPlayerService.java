@@ -1,7 +1,6 @@
 package com.qintingfm.explayer.tiny_player;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
@@ -11,7 +10,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media.MediaBrowserServiceCompat;
-import com.qintingfm.explayer.player.PlayerMediaPlayerListener;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -58,10 +56,14 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
         mediaSession.setCallback(playerMediaSessionCompatCallback);
         setSessionToken(mediaSession.getSessionToken());
         stateBuilder=new PlaybackStateCompat.Builder();
-        setPlayBackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
+        setPlaybackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
     }
-    private void setPlayBackState(@PlaybackStateCompat.State int state, long position, float playbackSpeed){
+    protected void setPlaybackState(@PlaybackStateCompat.State int state, long position, float playbackSpeed){
         mPlaybackStateCompat=stateBuilder.setState(state,position,playbackSpeed).build();
+        mediaSession.setPlaybackState(mPlaybackStateCompat);
+    }
+    protected void setPlaybackState(@PlaybackStateCompat.State int state, String errorMsg){
+        mPlaybackStateCompat=stateBuilder.setErrorMessage(state,errorMsg).build();
         mediaSession.setPlaybackState(mPlaybackStateCompat);
     }
 

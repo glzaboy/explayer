@@ -2,6 +2,7 @@ package com.qintingfm.explayer.tiny_player;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
@@ -27,7 +28,9 @@ public class PlayerClient extends MediaBrowserCompat.ConnectionCallback {
     }
 
     public void onStart(){
-        mediaBrowserCompat.connect();
+        if(mediaBrowserCompat!=null && !mediaBrowserCompat.isConnected()){
+            mediaBrowserCompat.connect();
+        }
     }
 
 
@@ -36,14 +39,14 @@ public class PlayerClient extends MediaBrowserCompat.ConnectionCallback {
         if(MediaControllerCompat.getMediaController(activity)!=null){
             MediaControllerCompat.getMediaController(activity).unregisterCallback(playerControlCallback);
         }
-        mediaBrowserCompat.disconnect();
+        if(mediaBrowserCompat!=null && mediaBrowserCompat.isConnected()){
+            mediaBrowserCompat.disconnect();
+            mediaBrowserCompat=null;
+        }
     }
     public void onResume(){
         Activity activity = activityWeakReference.get();
-//        if(MediaControllerCompat.getMediaController(activity)!=null){
-//            MediaControllerCompat.getMediaController(activity).unregisterCallback(playerControlCallback);
-//        }
-//        mediaBrowserCompat.disconnect();
+        activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override
@@ -53,6 +56,7 @@ public class PlayerClient extends MediaBrowserCompat.ConnectionCallback {
         try {
             mediaControllerCompat =new MediaControllerCompat(activity,mediaBrowserCompat.getSessionToken());
             MediaControllerCompat.setMediaController(activity,mediaControllerCompat);
+//            bind ui/
         } catch (RemoteException e) {
         }
     }

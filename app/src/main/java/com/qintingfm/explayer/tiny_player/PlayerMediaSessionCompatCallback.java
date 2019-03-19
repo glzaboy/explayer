@@ -15,8 +15,8 @@ import java.util.List;
 public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callback {
     WeakReference<TinyPlayerService> tinyPlayerServiceWeakReference;
 
-    private MediaPlayer mediaPlayer;
-
+    protected MediaPlayer mediaPlayer;
+    PlayerMediaPlayerListener playerMediaPlayerListener;
 
 
     protected MediaPlayer getMediaPlayer(boolean reset){
@@ -24,6 +24,12 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
             mediaPlayer=new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.reset();
+            playerMediaPlayerListener=new PlayerMediaPlayerListener(tinyPlayerServiceWeakReference.get());
+            mediaPlayer.setOnBufferingUpdateListener(playerMediaPlayerListener);
+            mediaPlayer.setOnCompletionListener(playerMediaPlayerListener);
+            mediaPlayer.setOnErrorListener(playerMediaPlayerListener);
+            mediaPlayer.setOnPreparedListener(playerMediaPlayerListener);
+            mediaPlayer.setOnSeekCompleteListener(playerMediaPlayerListener);
         }
         if(reset){
             mediaPlayer.reset();
