@@ -29,7 +29,7 @@
         </service>
 
         <receiver
-                android:name=".receiver.HeadsetPlugReceiver"
+                android:name=".tiny_player.HeadsetPlugReceiver"
                 android:enabled="true"
                 android:exported="true">
             <intent-filter>
@@ -51,13 +51,6 @@
                 android:exported="true"
                 android:permission="glz is good"
                 android:process=":mediaStore">
-        </service>
-        <service
-                android:name=".player.PlayerService"
-                android:enabled="true"
-                android:exported="true"
-                android:permission="glz is good"
-                android:process=":playCore">
         </service>
 
         <activity

@@ -1,10 +1,8 @@
 package com.qintingfm.explayer.activity;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +15,6 @@ import com.qintingfm.explayer.R;
 import com.qintingfm.explayer.fragment.HomeFragment;
 import com.qintingfm.explayer.fragment.PlayList;
 import com.qintingfm.explayer.fragment.Player;
-import com.qintingfm.explayer.player.PlayerCore;
-import com.qintingfm.explayer.player.PlayerService;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,8 +23,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.qintingfm.explayer.tiny_player.PlayerClient;
 
 public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, Player.OnFragmentInteractionListener,PlayList.OnFragmentInteractionListener {
-    public MediaBrowserCompat mediaBrowserCompat;
-    MediaBrowserCompat.ConnectionCallback mediaBrowserConnectionCallback;
 
     PlayerClient playerClient;
 

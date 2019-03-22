@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 
 import com.qintingfm.explayer.R;
-import com.qintingfm.explayer.player.PlayerCore;
-import com.qintingfm.explayer.player.PlayerEvent;
 
 import java.lang.ref.WeakReference;
 

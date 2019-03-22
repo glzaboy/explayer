@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.receiver;
+package com.qintingfm.explayer.tiny_player;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,36 +6,35 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import com.qintingfm.explayer.player.PlayerService;
 
 import java.lang.ref.WeakReference;
 
 public class HeadsetPlugReceiver extends BroadcastReceiver {
     private final String TAG= HeadsetPlugReceiver.class.getName();
-    WeakReference<PlayerService> playerServiceWeakReference;
+    WeakReference<TinyPlayerService> tinyPlayerServiceWeakReference;
     boolean mPauseByHeadset=false;
 
     public HeadsetPlugReceiver() {
     }
 
-    public HeadsetPlugReceiver(PlayerService playerService) {
-        this.playerServiceWeakReference = new WeakReference<>(playerService);
+    public HeadsetPlugReceiver(TinyPlayerService tinyPlayerService) {
+        this.tinyPlayerServiceWeakReference = new WeakReference<>(tinyPlayerService);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, intent.toString());
-        PlayerService playerService = playerServiceWeakReference.get();
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
 
-        if (playerService == null) {
+        if (tinyPlayerService == null) {
             return;
         }
 
         if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equalsIgnoreCase(intent.getAction())) {
-            if(playerService.mPlaybackStateCompat.getState()== PlaybackStateCompat.STATE_PLAYING){
+            if(tinyPlayerService.mPlaybackStateCompat.getState()== PlaybackStateCompat.STATE_PLAYING){
                 Log.d(TAG,"ACTION_AUDIO_BECOMING_NOISY stop");
                 mPauseByHeadset=true;
-                playerService.mediaControllerCompat.getTransportControls().pause();
+                tinyPlayerService.playerMediaSessionCompatCallback.onPause();
             }
         } else if (Intent.ACTION_HEADSET_PLUG.equalsIgnoreCase(intent.getAction()) && mPauseByHeadset) {
             if(intent.hasExtra("state")){
@@ -45,7 +44,7 @@ public class HeadsetPlugReceiver extends BroadcastReceiver {
                 if(intent.getIntExtra("state",0)==1){
                     Log.d(TAG,"ACTION_HEADSET_PLUG start");
                     mPauseByHeadset=false;
-                    playerService.mediaControllerCompat.getTransportControls().play();
+                    tinyPlayerService.playerMediaSessionCompatCallback.onPlay();
                 }
             }
 

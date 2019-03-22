@@ -1,5 +1,7 @@
 package com.qintingfm.explayer.tiny_player;
 
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -9,8 +11,6 @@ import android.support.v4.media.session.MediaSessionCompat;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.LinkedList;
-import java.util.List;
 
 public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callback {
     WeakReference<TinyPlayerService> tinyPlayerServiceWeakReference;
@@ -37,7 +37,7 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
         return mediaPlayer;
 
     }
-    private void destoryMediaPlayer(boolean reset){
+    private void destroyMediaPlayer(boolean reset){
         if(mediaPlayer!=null){
             mediaPlayer.reset();
             mediaPlayer.release();
@@ -74,6 +74,11 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
     @Override
     public void onPlay() {
         super.onPlay();
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        IntentFilter headSetPlug=new IntentFilter();
+        headSetPlug.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY  );
+        headSetPlug.addAction(Intent.ACTION_HEADSET_PLUG);
+        tinyPlayerService.registerReceiver(tinyPlayerService.headsetPlugReceiver,headSetPlug);
         getMediaPlayer(false).start();
     }
 
@@ -96,7 +101,9 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
     @Override
     public void onStop() {
         super.onStop();
-        destoryMediaPlayer(true);
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        tinyPlayerService.unregisterReceiver(tinyPlayerService.headsetPlugReceiver);
+        destroyMediaPlayer(true);
     }
 
     @Override

@@ -20,6 +20,7 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
     protected PlaybackStateCompat mPlaybackStateCompat;
     List<MediaDescriptionCompat> mediaDescriptionCompatList=new LinkedList<>();
 //    PlayerAudioManagerListener playerAudioManagerListener=new PlayerAudioManagerListener(this);
+    protected HeadsetPlugReceiver headsetPlugReceiver=new HeadsetPlugReceiver(this);
     PlayerMediaSessionCompatCallback playerMediaSessionCompatCallback=new PlayerMediaSessionCompatCallback(this);
 
 

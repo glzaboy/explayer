@@ -3,12 +3,11 @@ package com.qintingfm.explayer.tiny_player;
 import android.media.MediaPlayer;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import com.qintingfm.explayer.player.PlayerService;
 
 import java.lang.ref.WeakReference;
 
 public class PlayerMediaPlayerListener implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener {
-    final String TAG = PlayerService.class.getName();
+    final String TAG = PlayerMediaPlayerListener.class.getName();
     private WeakReference<TinyPlayerService> tinyPlayerServiceWeakReference;
     public PlayerMediaPlayerListener(TinyPlayerService tinyPlayerService) {
         tinyPlayerServiceWeakReference=new WeakReference<>(tinyPlayerService);
