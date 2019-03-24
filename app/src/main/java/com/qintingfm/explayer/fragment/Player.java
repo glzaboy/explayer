@@ -50,13 +50,13 @@ public class Player extends Fragment implements View.OnClickListener,SeekBar.OnS
     @Override
     public void onStart() {
         super.onStart();
-        PlayerCore.attach(getActivity(),new PlayerHandler(this));
+//        PlayerCore.attach(getActivity(),new PlayerHandler(this));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        PlayerCore.detach(getActivity());
+//        PlayerCore.detach(getActivity());
     }
     private static class PlayerHandler extends Handler {
         WeakReference<Player> playerWeakReference;
@@ -69,18 +69,18 @@ public class Player extends Fragment implements View.OnClickListener,SeekBar.OnS
             super.handleMessage(msg);
             Log.d(TAG,"UI test");
             switch (msg.what) {
-                case PlayerEvent.PLAYER_UPDATE_SEEK_BAR:
-
-                    Player player = playerWeakReference.get();
-
-                    if(player!=null){
-                        player.seekBar.setEnabled(true);
-                        player.seekBar.setMax(msg.arg1);
-                        player.seekBar.setProgress(msg.arg2);
-                    }
-                    break;
-                case PlayerEvent.PLAYER_UI_DETACH:
-                    break;
+//                case PlayerEvent.PLAYER_UPDATE_SEEK_BAR:
+//
+//                    Player player = playerWeakReference.get();
+//
+//                    if(player!=null){
+//                        player.seekBar.setEnabled(true);
+//                        player.seekBar.setMax(msg.arg1);
+//                        player.seekBar.setProgress(msg.arg2);
+//                    }
+//                    break;
+//                case PlayerEvent.PLAYER_UI_DETACH:
+//                    break;
             }
         }
     }

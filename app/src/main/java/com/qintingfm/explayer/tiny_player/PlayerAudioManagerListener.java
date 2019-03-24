@@ -17,11 +17,12 @@ public class PlayerAudioManagerListener implements AudioManager.OnAudioFocusChan
         audioManager = (AudioManager) tinyPlayerService.getSystemService(Context.AUDIO_SERVICE);
     }
 
-    public void reqAudioFocus() {
+    public int reqAudioFocus() {
         int i = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (i == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 
         }
+        return i;
     }
     public void loseAudioFocus(){
         audioManager.abandonAudioFocus(this);

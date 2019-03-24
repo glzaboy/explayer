@@ -121,34 +121,34 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
 
     @Override
     public void onPlayerInteraction(View v) {
-        Intent playerServiceIntent = new Intent(this, PlayerService.class);
+//        Intent playerServiceIntent = new Intent(this, PlayerService.class);
         switch (v.getId()) {
-            case R.id.play_pause:
-                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_PAUSE));
-                startService(playerServiceIntent);
-                break;
-            case R.id.prev:
-                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
-                startService(playerServiceIntent);
-                break;
-            case R.id.next:
-                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
-                startService(playerServiceIntent);
-                break;
+//            case R.id.play_pause:
+//                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_PAUSE));
+//                startService(playerServiceIntent);
+//                break;
+//            case R.id.prev:
+//                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
+//                startService(playerServiceIntent);
+//                break;
+//            case R.id.next:
+//                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
+//                startService(playerServiceIntent);
+//                break;
         }
     }
 
     @Override
     public void onPlayListInteraction(View v) {
-        PlayerCore.startService(this);
-        Intent intent=new Intent(this, PlayerService.class);
-        intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_FROM_URI));
-        intent.setData(Uri.parse(((TextView)v.findViewById(R.id.data)).getText().toString()));
-        intent.putExtra("title",((TextView)v.findViewById(R.id.title)).getText().toString());
-        intent.putExtra("artist",((TextView)v.findViewById(R.id.artist)).getText().toString());
-        intent.putExtra("position",Integer.valueOf(((TextView)v.findViewById(R.id.id)).getText().toString()));
-
-        startService(intent);
+//        PlayerCore.startService(this);
+//        Intent intent=new Intent(this, PlayerService.class);
+//        intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_FROM_URI));
+//        intent.setData(Uri.parse(((TextView)v.findViewById(R.id.data)).getText().toString()));
+//        intent.putExtra("title",((TextView)v.findViewById(R.id.title)).getText().toString());
+//        intent.putExtra("artist",((TextView)v.findViewById(R.id.artist)).getText().toString());
+//        intent.putExtra("position",Integer.valueOf(((TextView)v.findViewById(R.id.id)).getText().toString()));
+        playerClient.playFromUri(Uri.parse(((TextView)v.findViewById(R.id.data)).getText().toString()),null);
+//        startService(intent);
         Toast.makeText(this,((TextView)v.findViewById(R.id.data)).getText(),Toast.LENGTH_LONG).show();
     }
 
@@ -165,12 +165,12 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
     @Override
     public void onPlayerStopTrackingTouch(SeekBar seekBar) {
         switch (seekBar.getId()) {
-            case R.id.seekBar:
-                Intent intent = new Intent(this, PlayerService.class);
-                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SEEK_TO));
-                intent.putExtra("seek", seekBar.getProgress());
-                startService(intent);
-                break;
+//            case R.id.seekBar:
+//                Intent intent = new Intent(this, PlayerService.class);
+//                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SEEK_TO));
+//                intent.putExtra("seek", seekBar.getProgress());
+//                startService(intent);
+//                break;
             default:
         }
 
@@ -192,5 +192,11 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
     protected void onResume() {
         super.onResume();
         playerClient.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        playerClient.onDestroy();
     }
 }

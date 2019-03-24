@@ -40,9 +40,8 @@ public class PlayerMediaPlayerListener implements MediaPlayer.OnBufferingUpdateL
     @Override
     public void onPrepared(MediaPlayer mp) {
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
-        tinyPlayerService.mPlayerAudioManagerListener.reqAudioFocus();
-        mp.start();
         tinyPlayerService.setPlaybackState(PlaybackStateCompat.STATE_PLAYING,mp.getCurrentPosition(), 1.0f);
+        tinyPlayerService.playerMediaSessionCompatCallback.onPlay();
 //        playerService.playerNotification.updateNotify();
     }
 

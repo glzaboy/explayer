@@ -6,6 +6,9 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
+
+import com.qintingfm.explayer.RemoteMediaButtonReceiver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TinyPlayerService extends MediaBrowserServiceCompat {
-    private MediaSessionCompat mediaSession;
+    final String TAG = PlayerMediaPlayerListener.class.getName();
+    protected MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
     protected PlaybackStateCompat mPlaybackStateCompat;
     List<MediaDescriptionCompat> mediaDescriptionCompatList=new LinkedList<>();
@@ -49,6 +53,7 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate: ");
         mPlayerAudioManagerListener=new PlayerAudioManagerListener(this);
         mediaSession=new MediaSessionCompat(this,this.getClass().getSimpleName());
 
@@ -59,6 +64,20 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
         stateBuilder=new PlaybackStateCompat.Builder();
         setPlaybackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
+        mPlayerAudioManagerListener.loseAudioFocus();
+        mPlayerAudioManagerListener=null;
+        playerMediaSessionCompatCallback.destroyMediaPlayer();
+        playerMediaSessionCompatCallback=null;
+        mediaSession.release();
+        mediaSession=null;
+        setPlaybackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
+    }
+
     protected void setPlaybackState(@PlaybackStateCompat.State int state, long position, float playbackSpeed){
         mPlaybackStateCompat=stateBuilder.setState(state,position,playbackSpeed).build();
         mediaSession.setPlaybackState(mPlaybackStateCompat);
@@ -70,44 +89,28 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        RemoteMediaButtonReceiver.handleIntent(mediaSession,intent);
         if (intent != null && intent.getAction() != null) {
             long aLong = Long.valueOf(intent.getAction());
-            if (aLong == PlaybackStateCompat.ACTION_PLAY) {
-                mPlayerAudioManagerListener.reqAudioFocus();
-                playerMediaSessionCompatCallback.onPlay();
-            }
-            if (aLong == PlaybackStateCompat.ACTION_STOP) {
-                playerMediaSessionCompatCallback.onStop();
-            }
-            if (aLong == PlaybackStateCompat.ACTION_PAUSE) {
-                mPlayerAudioManagerListener.loseAudioFocus();
-                playerMediaSessionCompatCallback.onPause();
-            }
-            if (aLong == PlaybackStateCompat.ACTION_PLAY_FROM_URI) {
-                Bundle bundle = new Bundle();
-                bundle.putString("title", intent.getExtras().getString("title"));
-                bundle.putString("artist", intent.getExtras().getString("artist"));
-                bundle.putInt("position", intent.getExtras().getInt("position"));
-            }
-            if (aLong == PlaybackStateCompat.ACTION_SEEK_TO) {
-                int seek = intent.getExtras().getInt("seek");
-                playerMediaSessionCompatCallback.onSeekTo(seek);
-            }
-            if (aLong == PlaybackStateCompat.ACTION_PLAY_PAUSE) {
-                if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-                    playerMediaSessionCompatCallback.onPause();
-                    mPlayerAudioManagerListener.loseAudioFocus();
-                } else if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
-                    playerMediaSessionCompatCallback.onPlay();
-                    mPlayerAudioManagerListener.reqAudioFocus();
-                }
-            }
-            if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_NEXT) {
-                playerMediaSessionCompatCallback.onSkipToNext();
-            }
-            if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) {
-                playerMediaSessionCompatCallback.onSkipToPrevious();
-            }
+//            if (aLong == PlaybackStateCompat.ACTION_PLAY_FROM_URI) {
+//                Bundle bundle = new Bundle();
+//                bundle.putString("title", intent.getExtras().getString("title"));
+//                bundle.putString("artist", intent.getExtras().getString("artist"));
+//                bundle.putInt("position", intent.getExtras().getInt("position"));
+//            }
+//            if (aLong == PlaybackStateCompat.ACTION_SEEK_TO) {
+//                int seek = intent.getExtras().getInt("seek");
+//                playerMediaSessionCompatCallback.onSeekTo(seek);
+//            }
+//            if (aLong == PlaybackStateCompat.ACTION_PLAY_PAUSE) {
+//                if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+//                    playerMediaSessionCompatCallback.onPause();
+//                    mPlayerAudioManagerListener.loseAudioFocus();
+//                } else if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
+//                    playerMediaSessionCompatCallback.onPlay();
+//                    mPlayerAudioManagerListener.reqAudioFocus();
+//                }
+//            }
         }
 
 

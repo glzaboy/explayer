@@ -3,6 +3,7 @@ package com.qintingfm.explayer.tiny_player;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
@@ -41,12 +42,35 @@ public class PlayerClient extends MediaBrowserCompat.ConnectionCallback {
         }
         if(mediaBrowserCompat!=null && mediaBrowserCompat.isConnected()){
             mediaBrowserCompat.disconnect();
+
+        }
+    }
+    public void onDestroy(){
+        Activity activity = activityWeakReference.get();
+        if(mediaBrowserCompat!=null){
             mediaBrowserCompat=null;
         }
+
     }
     public void onResume(){
         Activity activity = activityWeakReference.get();
         activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+    }
+
+    public void playFromUri(Uri uri, Bundle bundle){
+        mediaControllerCompat.getTransportControls().playFromUri(uri,bundle);
+    }
+    public void play(){
+        mediaControllerCompat.getTransportControls().play();
+    }
+    public void pause(){
+        mediaControllerCompat.getTransportControls().pause();
+    }
+    public void skipToNext(){
+        mediaControllerCompat.getTransportControls().skipToNext();
+    }
+    public void skipToPrevious(){
+        mediaControllerCompat.getTransportControls().skipToPrevious();
     }
 
     @Override

@@ -8,12 +8,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.view.KeyEvent;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Timer;
 
 public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callback {
     WeakReference<TinyPlayerService> tinyPlayerServiceWeakReference;
+
+    public int headsetClick = 0;
+
+    private Timer headsetTimer = new Timer();
 
     protected MediaPlayer mediaPlayer;
     PlayerMediaPlayerListener playerMediaPlayerListener;
@@ -37,7 +44,7 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
         return mediaPlayer;
 
     }
-    private void destroyMediaPlayer(boolean reset){
+    protected void destroyMediaPlayer(){
         if(mediaPlayer!=null){
             mediaPlayer.reset();
             mediaPlayer.release();
@@ -61,13 +68,14 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
     }
 
     @Override
-    public void onPrepareFromUri(Uri uri, Bundle extras) {
-        super.onPrepareFromUri(uri, extras);
+    public void onPlayFromUri(Uri uri, Bundle extras) {
+        super.onPlayFromUri(uri, extras);
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
         try {
             getMediaPlayer(true).setDataSource(tinyPlayerService,uri);
+            getMediaPlayer(false).prepareAsync();
         } catch (IOException e) {
-            e.printStackTrace();
+            tinyPlayerService.setPlaybackState(PlaybackStateCompat.STATE_ERROR,e.getMessage());
         }
     }
 
@@ -75,17 +83,25 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
     public void onPlay() {
         super.onPlay();
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        if(tinyPlayerService.mPlayerAudioManagerListener.reqAudioFocus()!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
+            return;
+        }
         IntentFilter headSetPlug=new IntentFilter();
         headSetPlug.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY  );
         headSetPlug.addAction(Intent.ACTION_HEADSET_PLUG);
         tinyPlayerService.registerReceiver(tinyPlayerService.headsetPlugReceiver,headSetPlug);
+        tinyPlayerService.mediaSession.setActive(true);
+        tinyPlayerService.startService(new Intent(tinyPlayerService,TinyPlayerService.class));
         getMediaPlayer(false).start();
+        tinyPlayerService.setPlaybackState(PlaybackStateCompat.STATE_PLAYING,0,1.0f);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
         getMediaPlayer(false).pause();
+        tinyPlayerService.setPlaybackState(PlaybackStateCompat.STATE_PAUSED,0,1.0f);
     }
 
     @Override
@@ -98,12 +114,20 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
         super.onSkipToPrevious();
     }
 
+
+
+
     @Override
     public void onStop() {
         super.onStop();
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        tinyPlayerService.mPlayerAudioManagerListener.loseAudioFocus();
         tinyPlayerService.unregisterReceiver(tinyPlayerService.headsetPlugReceiver);
-        destroyMediaPlayer(true);
+        tinyPlayerService.mediaSession.setActive(false);
+        tinyPlayerService.stopSelf();
+        tinyPlayerService.stopForeground(false);
+        destroyMediaPlayer();
+        tinyPlayerService.setPlaybackState(PlaybackStateCompat.STATE_STOPPED,0,1.0f);
     }
 
     @Override
@@ -125,5 +149,45 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
         super.onRemoveQueueItem(description);
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
         tinyPlayerService.mediaDescriptionCompatList.remove(description);
+    }
+
+    @Override
+    public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        KeyEvent keyEvent = (KeyEvent) mediaButtonEvent.getExtras().get(Intent.EXTRA_KEY_EVENT);
+        switch (keyEvent.getKeyCode()) {
+            case KeyEvent.KEYCODE_HEADSETHOOK://单键耳机单独点击播放或暂停，双击下一首，三击上一首。
+                int action1 = keyEvent.getAction();
+                if(action1==KeyEvent.ACTION_DOWN){
+                    return super.onMediaButtonEvent(mediaButtonEvent);
+                }
+                if (headsetClick == 0) {
+                    headsetClick++;
+                    headsetTimer.schedule(new PlayerMediaButtonEvent(this), 1000, 2000);
+                }else{
+                    headsetClick++;
+                }
+                break;
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    onPause();
+                } else if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
+                    onPlay();
+                }
+                break;
+            case KeyEvent.KEYCODE_MEDIA_PLAY:
+                onPlay();
+                break;
+            case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                onPause();
+                break;
+            case KeyEvent.KEYCODE_MEDIA_NEXT:
+                onSkipToNext();
+                break;
+            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+                onSkipToPrevious();
+                break;
+        }
+        return super.onMediaButtonEvent(mediaButtonEvent);
     }
 }
