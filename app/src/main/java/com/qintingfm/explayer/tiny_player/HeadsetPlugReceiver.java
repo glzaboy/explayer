@@ -31,10 +31,10 @@ public class HeadsetPlugReceiver extends BroadcastReceiver {
         }
 
         if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equalsIgnoreCase(intent.getAction())) {
-            if(tinyPlayerService.mPlaybackStateCompat.getState()== PlaybackStateCompat.STATE_PLAYING){
+            if(tinyPlayerService.mPlaybackState.getState()== PlaybackStateCompat.STATE_PLAYING){
                 Log.d(TAG,"ACTION_AUDIO_BECOMING_NOISY stop");
                 mPauseByHeadset=true;
-                tinyPlayerService.playerMediaSessionCompatCallback.onPause();
+                tinyPlayerService.mMediaSessionCallback.onPause();
             }
         } else if (Intent.ACTION_HEADSET_PLUG.equalsIgnoreCase(intent.getAction()) && mPauseByHeadset) {
             if(intent.hasExtra("state")){
@@ -44,7 +44,7 @@ public class HeadsetPlugReceiver extends BroadcastReceiver {
                 if(intent.getIntExtra("state",0)==1){
                     Log.d(TAG,"ACTION_HEADSET_PLUG start");
                     mPauseByHeadset=false;
-                    tinyPlayerService.playerMediaSessionCompatCallback.onPlay();
+                    tinyPlayerService.mMediaSessionCallback.onPlay();
                 }
             }
 

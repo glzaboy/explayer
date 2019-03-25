@@ -37,11 +37,11 @@ public class PlayerAudioManagerListener implements AudioManager.OnAudioFocusChan
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN://恢复长时播放
                 if ( mPausedByTransientLossOfFocus) {
-                    tinyPlayerService.playerMediaSessionCompatCallback.onPlay();
+                    tinyPlayerService.mMediaSessionCallback.onPlay();
                 }
                 if (volume > 0) {
                     if(audioManager.isVolumeFixed()){
-                        tinyPlayerService.playerMediaSessionCompatCallback.getMediaPlayer(false).setVolume(1.0f,1.0f);
+                        tinyPlayerService.mMediaSessionCallback.getMediaPlayer(false).setVolume(1.0f,1.0f);
                     }else{
                         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
                     }
@@ -50,23 +50,23 @@ public class PlayerAudioManagerListener implements AudioManager.OnAudioFocusChan
                 break;
             case AudioManager.AUDIOFOCUS_LOSS://
                 tinyPlayerService.mPlayerAudioManagerListener.loseAudioFocus();
-                if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-                    tinyPlayerService.playerMediaSessionCompatCallback.onPause();
+                if (tinyPlayerService.mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    tinyPlayerService.mMediaSessionCallback.onPause();
                 }
 
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-                    tinyPlayerService.playerMediaSessionCompatCallback.onPause();
+                if (tinyPlayerService.mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    tinyPlayerService.mMediaSessionCallback.onPause();
                     mPausedByTransientLossOfFocus = true;
                 }
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                if (tinyPlayerService.mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
                     if(audioManager.isVolumeFixed()){
-                        tinyPlayerService.playerMediaSessionCompatCallback.getMediaPlayer(false).setVolume(0.1f,0.1f);
+                        tinyPlayerService.mMediaSessionCallback.getMediaPlayer(false).setVolume(0.1f,0.1f);
                         volume=1;
                     }else{
                         volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);

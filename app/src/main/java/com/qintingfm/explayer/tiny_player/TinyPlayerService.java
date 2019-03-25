@@ -21,11 +21,10 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
     final String TAG = PlayerMediaPlayerListener.class.getName();
     protected MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
-    protected PlaybackStateCompat mPlaybackStateCompat;
-    List<MediaDescriptionCompat> mediaDescriptionCompatList=new LinkedList<>();
-//    PlayerAudioManagerListener playerAudioManagerListener=new PlayerAudioManagerListener(this);
-    protected HeadsetPlugReceiver headsetPlugReceiver=new HeadsetPlugReceiver(this);
-    PlayerMediaSessionCompatCallback playerMediaSessionCompatCallback=new PlayerMediaSessionCompatCallback(this);
+    protected PlaybackStateCompat mPlaybackState;
+    List<MediaDescriptionCompat> mediaDescriptionList =new LinkedList<>();
+    protected HeadsetPlugReceiver mHeadsetPlugReceiver =new HeadsetPlugReceiver(this);
+    PlayerMediaSessionCompatCallback mMediaSessionCallback =new PlayerMediaSessionCompatCallback(this);
 
 
 
@@ -59,7 +58,7 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
 
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        mediaSession.setCallback(playerMediaSessionCompatCallback);
+        mediaSession.setCallback(mMediaSessionCallback);
         setSessionToken(mediaSession.getSessionToken());
         stateBuilder=new PlaybackStateCompat.Builder();
         setPlaybackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
@@ -71,20 +70,20 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
         Log.d(TAG, "onDestroy: ");
         mPlayerAudioManagerListener.loseAudioFocus();
         mPlayerAudioManagerListener=null;
-        playerMediaSessionCompatCallback.destroyMediaPlayer();
-        playerMediaSessionCompatCallback=null;
+        mMediaSessionCallback.destroyMediaPlayer();
+        mMediaSessionCallback =null;
         mediaSession.release();
         mediaSession=null;
         setPlaybackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
     }
 
     protected void setPlaybackState(@PlaybackStateCompat.State int state, long position, float playbackSpeed){
-        mPlaybackStateCompat=stateBuilder.setState(state,position,playbackSpeed).build();
-        mediaSession.setPlaybackState(mPlaybackStateCompat);
+        mPlaybackState =stateBuilder.setState(state,position,playbackSpeed).build();
+        mediaSession.setPlaybackState(mPlaybackState);
     }
     protected void setPlaybackState(@PlaybackStateCompat.State int state, String errorMsg){
-        mPlaybackStateCompat=stateBuilder.setErrorMessage(state,errorMsg).build();
-        mediaSession.setPlaybackState(mPlaybackStateCompat);
+        mPlaybackState =stateBuilder.setErrorMessage(state,errorMsg).build();
+        mediaSession.setPlaybackState(mPlaybackState);
     }
 
     @Override
@@ -92,28 +91,7 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
         RemoteMediaButtonReceiver.handleIntent(mediaSession,intent);
         if (intent != null && intent.getAction() != null) {
             long aLong = Long.valueOf(intent.getAction());
-//            if (aLong == PlaybackStateCompat.ACTION_PLAY_FROM_URI) {
-//                Bundle bundle = new Bundle();
-//                bundle.putString("title", intent.getExtras().getString("title"));
-//                bundle.putString("artist", intent.getExtras().getString("artist"));
-//                bundle.putInt("position", intent.getExtras().getInt("position"));
-//            }
-//            if (aLong == PlaybackStateCompat.ACTION_SEEK_TO) {
-//                int seek = intent.getExtras().getInt("seek");
-//                playerMediaSessionCompatCallback.onSeekTo(seek);
-//            }
-//            if (aLong == PlaybackStateCompat.ACTION_PLAY_PAUSE) {
-//                if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
-//                    playerMediaSessionCompatCallback.onPause();
-//                    mPlayerAudioManagerListener.loseAudioFocus();
-//                } else if (mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
-//                    playerMediaSessionCompatCallback.onPlay();
-//                    mPlayerAudioManagerListener.reqAudioFocus();
-//                }
-//            }
         }
-
-
         return super.onStartCommand(intent, flags, startId);
     }
 }

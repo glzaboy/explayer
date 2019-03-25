@@ -89,7 +89,7 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
         IntentFilter headSetPlug=new IntentFilter();
         headSetPlug.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY  );
         headSetPlug.addAction(Intent.ACTION_HEADSET_PLUG);
-        tinyPlayerService.registerReceiver(tinyPlayerService.headsetPlugReceiver,headSetPlug);
+        tinyPlayerService.registerReceiver(tinyPlayerService.mHeadsetPlugReceiver,headSetPlug);
         tinyPlayerService.mediaSession.setActive(true);
         tinyPlayerService.startService(new Intent(tinyPlayerService,TinyPlayerService.class));
         getMediaPlayer(false).start();
@@ -122,7 +122,7 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
         super.onStop();
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
         tinyPlayerService.mPlayerAudioManagerListener.loseAudioFocus();
-        tinyPlayerService.unregisterReceiver(tinyPlayerService.headsetPlugReceiver);
+        tinyPlayerService.unregisterReceiver(tinyPlayerService.mHeadsetPlugReceiver);
         tinyPlayerService.mediaSession.setActive(false);
         tinyPlayerService.stopSelf();
         tinyPlayerService.stopForeground(false);
@@ -134,21 +134,21 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
     public void onAddQueueItem(MediaDescriptionCompat description) {
         super.onAddQueueItem(description);
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
-        tinyPlayerService.mediaDescriptionCompatList.add(description);
+        tinyPlayerService.mediaDescriptionList.add(description);
     }
 
     @Override
     public void onAddQueueItem(MediaDescriptionCompat description, int index) {
         super.onAddQueueItem(description, index);
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
-        tinyPlayerService.mediaDescriptionCompatList.add(index,description);
+        tinyPlayerService.mediaDescriptionList.add(index,description);
     }
 
     @Override
     public void onRemoveQueueItem(MediaDescriptionCompat description) {
         super.onRemoveQueueItem(description);
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
-        tinyPlayerService.mediaDescriptionCompatList.remove(description);
+        tinyPlayerService.mediaDescriptionList.remove(description);
     }
 
     @Override
@@ -169,9 +169,9 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
                 }
                 break;
             case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                if (tinyPlayerService.mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
                     onPause();
-                } else if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
+                } else if (tinyPlayerService.mPlaybackState.getState() == PlaybackStateCompat.STATE_PAUSED) {
                     onPlay();
                 }
                 break;

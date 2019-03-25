@@ -18,7 +18,7 @@ public class PlayerMediaPlayerListener implements MediaPlayer.OnBufferingUpdateL
         Log.d(TAG, "Music Buffering %" + percent);
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
         if(tinyPlayerService!=null){
-            tinyPlayerService.setPlaybackState(PlaybackStateCompat.STATE_BUFFERING, tinyPlayerService.playerMediaSessionCompatCallback.mediaPlayer.getCurrentPosition(), 1.0f);
+            tinyPlayerService.setPlaybackState(PlaybackStateCompat.STATE_BUFFERING, tinyPlayerService.mMediaSessionCallback.mediaPlayer.getCurrentPosition(), 1.0f);
         }
 
     }
@@ -27,7 +27,7 @@ public class PlayerMediaPlayerListener implements MediaPlayer.OnBufferingUpdateL
     public void onCompletion(MediaPlayer mp) {
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
         tinyPlayerService.setPlaybackState(PlaybackStateCompat.STATE_STOPPED,0,1.0f);
-        tinyPlayerService.playerMediaSessionCompatCallback.onSkipToNext();
+        tinyPlayerService.mMediaSessionCallback.onSkipToNext();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PlayerMediaPlayerListener implements MediaPlayer.OnBufferingUpdateL
     public void onPrepared(MediaPlayer mp) {
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
         tinyPlayerService.setPlaybackState(PlaybackStateCompat.STATE_PLAYING,mp.getCurrentPosition(), 1.0f);
-        tinyPlayerService.playerMediaSessionCompatCallback.onPlay();
+        tinyPlayerService.mMediaSessionCallback.onPlay();
 //        playerService.playerNotification.updateNotify();
     }
 

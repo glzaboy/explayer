@@ -22,9 +22,9 @@ public class PlayerMediaButtonEvent extends TimerTask {
         TinyPlayerService tinyPlayerService = playerMediaSessionCompatCallback.tinyPlayerServiceWeakReference.get();
         switch (playerMediaSessionCompatCallback.headsetClick) {
             case 1:
-                if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                if (tinyPlayerService.mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
                     playerMediaSessionCompatCallback.onPause();
-                } else if (tinyPlayerService.mPlaybackStateCompat.getState() == PlaybackStateCompat.STATE_PAUSED) {
+                } else if (tinyPlayerService.mPlaybackState.getState() == PlaybackStateCompat.STATE_PAUSED) {
                     playerMediaSessionCompatCallback.onPlay();
 
                 }
