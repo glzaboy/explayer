@@ -114,8 +114,14 @@ public class PlayerMediaSessionCompatCallback  extends MediaSessionCompat.Callba
         super.onSkipToPrevious();
     }
 
-
-
+    @Override
+    public void onSeekTo(long pos) {
+        super.onSeekTo(pos);
+        TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        if(tinyPlayerService.mPlaybackState.getState()==PlaybackStateCompat.STATE_PLAYING){
+            getMediaPlayer(false).seekTo((int)pos);
+        }
+    }
 
     @Override
     public void onStop() {

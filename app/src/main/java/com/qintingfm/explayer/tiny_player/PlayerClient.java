@@ -10,12 +10,13 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import androidx.annotation.Nullable;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 public class PlayerClient extends MediaBrowserCompat.ConnectionCallback {
-    WeakReference<Activity> activityWeakReference;
+    private WeakReference<Activity> activityWeakReference;
     MediaBrowserCompat mediaBrowserCompat;
-    PlayerControlCallback playerControlCallback=new PlayerControlCallback();
+    private PlayerControlCallback playerControlCallback=new PlayerControlCallback();
     MediaControllerCompat mediaControllerCompat;
 
 
@@ -42,11 +43,9 @@ public class PlayerClient extends MediaBrowserCompat.ConnectionCallback {
         }
         if(mediaBrowserCompat!=null && mediaBrowserCompat.isConnected()){
             mediaBrowserCompat.disconnect();
-
         }
     }
     public void onDestroy(){
-        Activity activity = activityWeakReference.get();
         if(mediaBrowserCompat!=null){
             mediaBrowserCompat=null;
         }
@@ -57,22 +56,57 @@ public class PlayerClient extends MediaBrowserCompat.ConnectionCallback {
         activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
+    /**
+     * 播放指定的uri
+     * @param uri 需要播放的音乐文件
+     * @param bundle 播放的其它参数
+     */
     public void playFromUri(Uri uri, Bundle bundle){
+        if (uri.toString().startsWith("/")){
+            uri=Uri.fromFile(new File(uri.getPath()));
+        }
         mediaControllerCompat.getTransportControls().playFromUri(uri,bundle);
     }
+
+
+    public void playFromMediaId(String mediaId, Bundle bundle){
+        mediaControllerCompat.getTransportControls().playFromMediaId(mediaId,bundle);
+    }
+    public void playFromSearch(String query, Bundle bundle){
+        mediaControllerCompat.getTransportControls().playFromSearch(query,bundle);
+    }
+
+    /**
+     * 播放
+     */
     public void play(){
         mediaControllerCompat.getTransportControls().play();
     }
+
+    /**
+     * 暂停
+     */
     public void pause(){
         mediaControllerCompat.getTransportControls().pause();
     }
-    public void skipToNext(){
-        mediaControllerCompat.getTransportControls().skipToNext();
-    }
+    /**
+     * 跳转前一首
+     */
     public void skipToPrevious(){
         mediaControllerCompat.getTransportControls().skipToPrevious();
     }
-
+    /**
+     * 跳转下一首
+     */
+    public void skipToNext(){
+        mediaControllerCompat.getTransportControls().skipToNext();
+    }
+    /**
+     * 跳转下一首
+     */
+    public void seekTo(long pos){
+        mediaControllerCompat.getTransportControls().seekTo(pos);
+    }
     @Override
     public void onConnected() {
         super.onConnected();

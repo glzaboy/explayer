@@ -25,15 +25,7 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
     List<MediaDescriptionCompat> mediaDescriptionList =new LinkedList<>();
     protected HeadsetPlugReceiver mHeadsetPlugReceiver =new HeadsetPlugReceiver(this);
     PlayerMediaSessionCompatCallback mMediaSessionCallback =new PlayerMediaSessionCompatCallback(this);
-
-
-
-
     PlayerAudioManagerListener mPlayerAudioManagerListener;
-
-
-
-
     @Nullable
     @Override
     public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
@@ -68,13 +60,14 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
+        setPlaybackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
         mPlayerAudioManagerListener.loseAudioFocus();
         mPlayerAudioManagerListener=null;
         mMediaSessionCallback.destroyMediaPlayer();
         mMediaSessionCallback =null;
         mediaSession.release();
         mediaSession=null;
-        setPlaybackState(PlaybackStateCompat.STATE_NONE,0,1.0f);
+
     }
 
     protected void setPlaybackState(@PlaybackStateCompat.State int state, long position, float playbackSpeed){

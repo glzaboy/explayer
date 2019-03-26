@@ -3,7 +3,6 @@ package com.qintingfm.explayer.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
@@ -127,14 +126,14 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
 //                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_PLAY_PAUSE));
 //                startService(playerServiceIntent);
 //                break;
-//            case R.id.prev:
-//                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
+            case R.id.prev:
+                playerClient.skipToPrevious();
 //                startService(playerServiceIntent);
-//                break;
-//            case R.id.next:
-//                playerServiceIntent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
+                break;
+            case R.id.next:
+                playerClient.skipToNext();
 //                startService(playerServiceIntent);
-//                break;
+                break;
         }
     }
 
@@ -165,12 +164,9 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
     @Override
     public void onPlayerStopTrackingTouch(SeekBar seekBar) {
         switch (seekBar.getId()) {
-//            case R.id.seekBar:
-//                Intent intent = new Intent(this, PlayerService.class);
-//                intent.setAction(String.valueOf(PlaybackStateCompat.ACTION_SEEK_TO));
-//                intent.putExtra("seek", seekBar.getProgress());
-//                startService(intent);
-//                break;
+            case R.id.seekBar:
+                playerClient.seekTo(seekBar.getProgress());
+                break;
             default:
         }
 
