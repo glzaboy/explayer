@@ -20,7 +20,6 @@ public class HeadsetPlugReceiver extends BroadcastReceiver {
     public HeadsetPlugReceiver(TinyPlayerService tinyPlayerService) {
         this.tinyPlayerServiceWeakReference = new WeakReference<>(tinyPlayerService);
     }
-
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, intent.toString());

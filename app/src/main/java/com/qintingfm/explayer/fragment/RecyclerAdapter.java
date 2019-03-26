@@ -1,5 +1,6 @@
 package com.qintingfm.explayer.fragment;
 
+import android.support.v4.media.MediaBrowserCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,21 +17,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
     private static final String TAG=RecyclerAdapter.class.getName();
-    private List<LocalMedia> data;
+    private List<MediaBrowserCompat.MediaItem> data;
     private View.OnClickListener mOnItemClickListener;
     private View.OnClickListener mOnClickListener;
-    public RecyclerAdapter(List<LocalMedia> data) {
+    public RecyclerAdapter(List<MediaBrowserCompat.MediaItem> data) {
         this.data=data;
     }
 
-    public List<LocalMedia> getData() {
+    public List<MediaBrowserCompat.MediaItem> getData() {
         return data;
     }
 
     public void clearData() {
         this.data = new ArrayList<>();
     }
-    public void addData(LocalMedia localMedia) {
+    public void addData(MediaBrowserCompat.MediaItem localMedia) {
         this.data.add(localMedia);
     }
 
@@ -62,13 +63,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Vh> {
             }
         });
 
-        vh.title.setText(data.get(i).getTitle());
+        vh.title.setText(data.get(i).getDescription().getTitle());
 
-        vh.artist.setText(data.get(i).getArtist());
-        vh.displayName.setText(data.get(i).getDisplayName());
-        vh.data.setText(data.get(i).getData());
-        vh.duration.setText(String.valueOf(data.get(i).getDuration()));
-        vh.id.setText(String.valueOf(data.get(i).getId()));
+        vh.artist.setText(data.get(i).getDescription().getTitle());
+        vh.displayName.setText(data.get(i).getDescription().getTitle());
+        vh.data.setText(data.get(i).getDescription().getMediaUri().toString());
+        vh.duration.setText(String.valueOf(data.get(i).getDescription().getTitle()));
+        vh.id.setText(String.valueOf(data.get(i).getMediaId()));
 
 
     }

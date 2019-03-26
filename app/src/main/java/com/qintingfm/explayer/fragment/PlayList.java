@@ -2,6 +2,7 @@ package com.qintingfm.explayer.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.media.MediaBrowserCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class PlayList extends Fragment {
             linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
             viewById.setItemAnimator(new DefaultItemAnimator());
             viewById.addItemDecoration(new DividerItemDecoration(context,0));
-            final RecyclerAdapter recyclerAdapter = new RecyclerAdapter(new ArrayList<LocalMedia>());
+            final RecyclerAdapter recyclerAdapter = new RecyclerAdapter(new ArrayList<MediaBrowserCompat.MediaItem>());
 
             recyclerAdapter.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -63,42 +65,15 @@ public class PlayList extends Fragment {
 //        });
             viewById.setAdapter(recyclerAdapter );
             viewById.setLayoutManager(linearLayoutManager);
-            final MediaStoreDatabase media_store_database = Room.databaseBuilder(context.getApplicationContext(), MediaStoreDatabase.class, "Media Store Database").build();
-            final LocalMediaDao localMediaDao = media_store_database.getLocalMediaDao();
-            Observable<LocalMedia> localMediaObservable = Observable.create(new ObservableOnSubscribe<LocalMedia>() {
-                @Override
-                public void subscribe(ObservableEmitter<LocalMedia> e) {
-                    List<LocalMedia> all = localMediaDao.findAll();
-                    for (LocalMedia localMedia:all){
-                        e.onNext(localMedia);
-                    }
-                    e.onComplete();
-
+            if (getArguments() != null) {
+                ArrayList<MediaBrowserCompat.MediaItem> playerList = (ArrayList<MediaBrowserCompat.MediaItem>)(getArguments().getSerializable("playerList"));
+                for (MediaBrowserCompat.MediaItem mediaItem:playerList
+                     ) {
+                    recyclerAdapter.addData(mediaItem);
                 }
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-            localMediaObservable.subscribe(
-                    new Observer<LocalMedia>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-                            recyclerAdapter.clearData();
-                        }
-
-                        @Override
-                        public void onNext(LocalMedia localMedia) {
-                            recyclerAdapter.addData(localMedia);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            recyclerAdapter.notifyDataSetChanged();
-                            media_store_database.close();
-                        }
-                    }
-            );
+            }
+//            recyclerAdapter.addData(localMedia);
+            recyclerAdapter.notifyDataSetChanged();
         }
         return view;
     }

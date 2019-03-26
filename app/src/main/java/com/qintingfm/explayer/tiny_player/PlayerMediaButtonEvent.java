@@ -6,7 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.TimerTask;
 
 public class PlayerMediaButtonEvent extends TimerTask {
-    WeakReference<PlayerMediaSessionCompatCallback> playerMediaSessionCompatCallbackWeakReference;
+    private WeakReference<PlayerMediaSessionCompatCallback> playerMediaSessionCompatCallbackWeakReference;
 
     public PlayerMediaButtonEvent(PlayerMediaSessionCompatCallback playerMediaSessionCompatCallback) {
         this.playerMediaSessionCompatCallbackWeakReference = new WeakReference<>(playerMediaSessionCompatCallback);

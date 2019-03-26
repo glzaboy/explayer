@@ -3,6 +3,7 @@ package com.qintingfm.explayer.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.media.MediaBrowserCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
@@ -19,11 +20,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import com.qintingfm.explayer.tiny_player.PlayerClient;
 
-public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, Player.OnFragmentInteractionListener,PlayList.OnFragmentInteractionListener {
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
+public class NavActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, Player.OnFragmentInteractionListener, PlayList.OnFragmentInteractionListener, PlayerClient.PlayerClientListen {
 
     PlayerClient playerClient;
+    ArrayList<MediaBrowserCompat.MediaItem> children=new ArrayList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -43,6 +50,9 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
                     break;
                 case R.id.navigation_playlist:
                     PlayList playList = new PlayList();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("playerList", children);
+                    playList.setArguments(bundle);
                     fragmentTransaction.replace(R.id.fragment_layout, playList);
                     break;
             }
@@ -63,7 +73,7 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
             getSupportActionBar().setIcon(R.drawable.ic_music_black_24dp);
         }
         setContentView(R.layout.activity_nav);
-        playerClient=new PlayerClient(this);
+        playerClient = new PlayerClient(this);
         playerClient.onCreate(null);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -146,9 +156,9 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
 //        intent.putExtra("title",((TextView)v.findViewById(R.id.title)).getText().toString());
 //        intent.putExtra("artist",((TextView)v.findViewById(R.id.artist)).getText().toString());
 //        intent.putExtra("position",Integer.valueOf(((TextView)v.findViewById(R.id.id)).getText().toString()));
-        playerClient.playFromUri(Uri.parse(((TextView)v.findViewById(R.id.data)).getText().toString()),null);
+        playerClient.playFromUri(Uri.parse(((TextView) v.findViewById(R.id.data)).getText().toString()), null);
 //        startService(intent);
-        Toast.makeText(this,((TextView)v.findViewById(R.id.data)).getText(),Toast.LENGTH_LONG).show();
+        Toast.makeText(this, ((TextView) v.findViewById(R.id.data)).getText(), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -194,5 +204,12 @@ public class NavActivity extends AppCompatActivity implements HomeFragment.OnFra
     protected void onDestroy() {
         super.onDestroy();
         playerClient.onDestroy();
+    }
+
+    @Override
+    public void onChildrenLoaded(@NonNull String parentId, @NonNull List<MediaBrowserCompat.MediaItem> children) {
+        for (MediaBrowserCompat.MediaItem mediaItem : children) {
+            this.children.add(mediaItem);
+        }
     }
 }
