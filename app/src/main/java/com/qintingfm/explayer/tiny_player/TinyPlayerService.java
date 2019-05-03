@@ -125,7 +125,7 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
         setPlaybackState(stateBuilder.setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f).build());
         mPlayerAudioManagerListener.loseAudioFocus();
         mPlayerAudioManagerListener = null;
-        mMediaSessionCallback.destroyMediaPlayer();
+        mMediaSessionCallback.onStop();
         mMediaSessionCallback = null;
         mediaSession.release();
         mediaSession = null;
