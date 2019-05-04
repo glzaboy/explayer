@@ -4,7 +4,6 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.support.v4.media.session.PlaybackStateCompat;
 
-import com.qintingfm.explayer.tiny_player.server.TinyPlayerService;
 
 import java.lang.ref.WeakReference;
 

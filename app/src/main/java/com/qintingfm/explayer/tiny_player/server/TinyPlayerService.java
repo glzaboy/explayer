@@ -145,10 +145,44 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        int i = super.onStartCommand(intent, flags, startId);
         RemoteMediaButtonReceiver.handleIntent(mediaSession, intent);
         if (intent != null && intent.getAction() != null) {
             long aLong = Long.valueOf(intent.getAction());
+            if (aLong == PlaybackStateCompat.ACTION_PLAY) {
+                mMediaSessionCallback.onPlay();
+            }
+            if (aLong == PlaybackStateCompat.ACTION_STOP) {
+                mMediaSessionCallback.onStop();
+            }
+            if (aLong == PlaybackStateCompat.ACTION_PAUSE) {
+                mMediaSessionCallback.onPause();
+            }
+            if (aLong == PlaybackStateCompat.ACTION_PLAY_FROM_URI) {
+                Bundle bundle = new Bundle();
+                bundle.putString("title", intent.getExtras().getString("title"));
+                bundle.putString("artist", intent.getExtras().getString("artist"));
+                bundle.putInt("position", intent.getExtras().getInt("position"));
+                mMediaSessionCallback.onPlayFromUri(intent.getData(),bundle);
+            }
+            if (aLong == PlaybackStateCompat.ACTION_SEEK_TO) {
+                int seek = intent.getExtras().getInt("seek");
+                mMediaSessionCallback.onSeekTo(seek);
+            }
+            if (aLong == PlaybackStateCompat.ACTION_PLAY_PAUSE) {
+                if (mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    mMediaSessionCallback.onPause();
+                } else if (mPlaybackState.getState() == PlaybackStateCompat.STATE_PAUSED) {
+                    mMediaSessionCallback.onPlay();
+                }
+            }
+            if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_NEXT) {
+                mMediaSessionCallback.onSkipToNext();
+            }
+            if (aLong == PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) {
+                mMediaSessionCallback.onSkipToPrevious();
+            }
         }
-        return super.onStartCommand(intent, flags, startId);
+        return i;
     }
 }

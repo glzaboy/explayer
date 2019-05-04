@@ -13,7 +13,6 @@ import android.view.KeyEvent;
 
 import com.qintingfm.explayer.tiny_player.PlayerMediaButtonEvent;
 import com.qintingfm.explayer.tiny_player.PlayerMediaPlayerListener;
-import com.qintingfm.explayer.tiny_player.server.TinyPlayerService;
 import com.qintingfm.explayer.tiny_player.server.ui.PlayerNotification;
 
 import java.io.IOException;
@@ -106,15 +105,20 @@ public class PlayerMediaSessionCompatCallback extends MediaSessionCompat.Callbac
         tinyPlayerService.startForeground(100,playerNotification.getBuilder().build());
         getMediaPlayer(false).start();
         tinyPlayerService.setPlaybackState(tinyPlayerService.stateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, getMediaPlayer(false).getCurrentPosition(), 1.0f).build());
+        playerNotification.updateNotify();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
+        if (tinyPlayerService.mPlayerAudioManagerListener!=null) {
+            tinyPlayerService.mPlayerAudioManagerListener.loseAudioFocus();
+        }
         getMediaPlayer(false).pause();
         tinyPlayerService.stopForeground(true);
         tinyPlayerService.setPlaybackState(tinyPlayerService.stateBuilder.setState(PlaybackStateCompat.STATE_PAUSED, getMediaPlayer(false).getCurrentPosition(), 1.0f).build());
+        playerNotification.updateNotify();
     }
 
     @Override
@@ -148,6 +152,7 @@ public class PlayerMediaSessionCompatCallback extends MediaSessionCompat.Callbac
         tinyPlayerService.stopForeground(false);
         destroyMediaPlayer();
         tinyPlayerService.setPlaybackState(tinyPlayerService.stateBuilder.setState(PlaybackStateCompat.STATE_STOPPED, 0, 1.0f).build());
+        playerNotification.updateNotify();
     }
 
     @Override
