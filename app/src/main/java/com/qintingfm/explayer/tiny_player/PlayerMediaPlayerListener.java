@@ -4,6 +4,8 @@ import android.media.MediaPlayer;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
+import com.qintingfm.explayer.tiny_player.server.TinyPlayerService;
+
 import java.lang.ref.WeakReference;
 
 public class PlayerMediaPlayerListener implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener {

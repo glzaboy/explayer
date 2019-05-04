@@ -19,7 +19,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <service
-                android:name=".tiny_player.TinyPlayerService"
+                android:name=".tiny_player.server.TinyPlayerService"
                 android:enabled="true"
                 android:exported="true"
                 android:process=":tinyPlayer">
@@ -29,7 +29,7 @@
         </service>
 
         <receiver
-                android:name=".tiny_player.HeadsetPlugReceiver"
+                android:name=".tiny_player.server.HeadsetPlugReceiver"
                 android:enabled="true"
                 android:exported="true">
             <intent-filter>

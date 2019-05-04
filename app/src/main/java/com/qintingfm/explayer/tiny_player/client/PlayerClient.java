@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.tiny_player;
+package com.qintingfm.explayer.tiny_player.client;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -8,9 +8,8 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.view.View;
 
-import com.qintingfm.explayer.fragment.PlayList;
+import com.qintingfm.explayer.tiny_player.server.TinyPlayerService;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.tiny_player;
+package com.qintingfm.explayer.tiny_player.server;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

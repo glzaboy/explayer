@@ -2,6 +2,9 @@ package com.qintingfm.explayer.tiny_player;
 
 import android.support.v4.media.session.PlaybackStateCompat;
 
+import com.qintingfm.explayer.tiny_player.server.PlayerMediaSessionCompatCallback;
+import com.qintingfm.explayer.tiny_player.server.TinyPlayerService;
+
 import java.lang.ref.WeakReference;
 import java.util.TimerTask;
 

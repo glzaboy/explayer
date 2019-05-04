@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.tiny_player;
+package com.qintingfm.explayer.tiny_player.server;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import com.qintingfm.explayer.RemoteMediaButtonReceiver;
 import com.qintingfm.explayer.dao.LocalMediaDao;
 import com.qintingfm.explayer.database.MediaStoreDatabase;
 import com.qintingfm.explayer.entity.LocalMedia;
+import com.qintingfm.explayer.tiny_player.PlayerMediaPlayerListener;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,11 +33,11 @@ import java.util.List;
 public class TinyPlayerService extends MediaBrowserServiceCompat {
     final String TAG = PlayerMediaPlayerListener.class.getName();
     protected MediaSessionCompat mediaSession;
-    protected PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder();
-    protected PlaybackStateCompat mPlaybackState;
+    public PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder();
+    public PlaybackStateCompat mPlaybackState;
     List<MediaMetadataCompat> mediaMetadataCompats = new LinkedList<>();
-    protected HeadsetPlugReceiver mHeadsetPlugReceiver = new HeadsetPlugReceiver(this);
-    PlayerMediaSessionCompatCallback mMediaSessionCallback = new PlayerMediaSessionCompatCallback(this);
+    protected HeadsetPlugReceiver mHeadsetPlugReceiver;
+    public PlayerMediaSessionCompatCallback mMediaSessionCallback;
     PlayerAudioManagerListener mPlayerAudioManagerListener;
 
     @Nullable
@@ -66,6 +67,8 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
+        mMediaSessionCallback = new PlayerMediaSessionCompatCallback(this);
+        mHeadsetPlugReceiver = new HeadsetPlugReceiver(this);
         final MediaStoreDatabase media_store_database = Room.databaseBuilder(this.getApplicationContext(), MediaStoreDatabase.class, "Media Store Database").build();
         final LocalMediaDao localMediaDao = media_store_database.getLocalMediaDao();
         Observable<LocalMedia> localMediaObservable = Observable.create(new ObservableOnSubscribe<LocalMedia>() {
@@ -133,7 +136,7 @@ public class TinyPlayerService extends MediaBrowserServiceCompat {
 
     }
 
-    protected void setPlaybackState(@Nullable PlaybackStateCompat playBackState) {
+    public void setPlaybackState(@Nullable PlaybackStateCompat playBackState) {
         if (playBackState != null) {
             mPlaybackState = playBackState;
         }

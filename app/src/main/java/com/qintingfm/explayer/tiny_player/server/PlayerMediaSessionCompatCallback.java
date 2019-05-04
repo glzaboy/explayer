@@ -1,4 +1,4 @@
-package com.qintingfm.explayer.tiny_player;
+package com.qintingfm.explayer.tiny_player.server;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,12 +11,19 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.KeyEvent;
 
+import com.qintingfm.explayer.tiny_player.PlayerMediaButtonEvent;
+import com.qintingfm.explayer.tiny_player.PlayerMediaPlayerListener;
+import com.qintingfm.explayer.tiny_player.server.TinyPlayerService;
+import com.qintingfm.explayer.tiny_player.server.ui.PlayerNotification;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Timer;
 
 public class PlayerMediaSessionCompatCallback extends MediaSessionCompat.Callback {
-    WeakReference<TinyPlayerService> tinyPlayerServiceWeakReference;
+    public WeakReference<TinyPlayerService> tinyPlayerServiceWeakReference;
+    public PlayerNotification playerNotification;
+
 
     public int headsetClick = 0;
 
@@ -55,7 +62,10 @@ public class PlayerMediaSessionCompatCallback extends MediaSessionCompat.Callbac
 
     public PlayerMediaSessionCompatCallback(TinyPlayerService tinyPlayerService) {
         tinyPlayerServiceWeakReference = new WeakReference<>(tinyPlayerService);
-
+        playerNotification=new PlayerNotification(tinyPlayerService.getApplicationContext(),"tiny _player");
+        playerNotification.setTinyPlayerServiceWeakReference(tinyPlayerServiceWeakReference);
+        playerNotification.getDefault(android.R.drawable.btn_default,"test","test"
+        );
     }
 
     @Override
@@ -93,6 +103,7 @@ public class PlayerMediaSessionCompatCallback extends MediaSessionCompat.Callbac
         tinyPlayerService.registerReceiver(tinyPlayerService.mHeadsetPlugReceiver, headSetPlug);
         tinyPlayerService.mediaSession.setActive(true);
         tinyPlayerService.startService(new Intent(tinyPlayerService, TinyPlayerService.class));
+        tinyPlayerService.startForeground(100,playerNotification.getBuilder().build());
         getMediaPlayer(false).start();
         tinyPlayerService.setPlaybackState(tinyPlayerService.stateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, getMediaPlayer(false).getCurrentPosition(), 1.0f).build());
     }
@@ -102,6 +113,7 @@ public class PlayerMediaSessionCompatCallback extends MediaSessionCompat.Callbac
         super.onPause();
         TinyPlayerService tinyPlayerService = tinyPlayerServiceWeakReference.get();
         getMediaPlayer(false).pause();
+        tinyPlayerService.stopForeground(true);
         tinyPlayerService.setPlaybackState(tinyPlayerService.stateBuilder.setState(PlaybackStateCompat.STATE_PAUSED, getMediaPlayer(false).getCurrentPosition(), 1.0f).build());
     }
 

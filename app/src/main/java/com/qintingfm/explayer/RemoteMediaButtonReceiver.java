@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.media.session.PlaybackStateCompat;
 
-import com.qintingfm.explayer.tiny_player.TinyPlayerService;
+import com.qintingfm.explayer.tiny_player.server.TinyPlayerService;
 
 import androidx.media.session.MediaButtonReceiver;
 

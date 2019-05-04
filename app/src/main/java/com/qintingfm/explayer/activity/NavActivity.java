@@ -21,9 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.qintingfm.explayer.tiny_player.PlayerClient;
+import com.qintingfm.explayer.tiny_player.client.PlayerClient;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
